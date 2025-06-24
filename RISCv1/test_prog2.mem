@@ -1,0 +1,15 @@
+0000_010_000_000000  // 00 load R0 <- Mem(R2 + 0) = 1
+0000_010_001_000001  // 02 load R1 <- Mem(R2 + 1) = 2
+1100_000_001_000010  // 04 BNE 2 (skip two instruction, to 0x0a)
+0010_000_001_011_000 // 06 Add R3 <- R0 + R1 = 3
+1101_000000000000    // 08 J jump to the beginning address
+0000_010_001_000000  // 0a load R1 <- Mem(R2 + 0) = 1
+1011_000_001_000011  // 0c BEQ 3 (skip three instruction, to 0x14)
+0010_000_001_011_000 // 0e Add R3 <- R0 + R1 = 2
+1101_000000000000    // 10 J jump to the beginning address
+1101_000000001001    // 12 J jump to here (loop)
+0000_010_001_000000  // 14 load R1 <- Mem(R2 + 0) = 1
+1011_000_001_111101  // 16 BEQ -3 (skip three instructions backwards, to inst 0x12)
+1101_000000000000    // 18 J jump to the beginning address
+1101_000000000000    // 1a J jump to the beginning address
+1101_000000000000    // 1c J jump to the beginning address
