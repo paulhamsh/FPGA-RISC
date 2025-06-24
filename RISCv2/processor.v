@@ -8,7 +8,7 @@ module Risc_16_bit(
   );
   
   wire jump,bne,beq,mem_read,mem_write,alu_src,reg_dst,mem_to_reg,reg_write;
-  wire[1:0] alu_op;
+  wire [2:0] alu_op;
   wire [3:0] opcode;
   // Datapath
   Datapath_Unit DU
