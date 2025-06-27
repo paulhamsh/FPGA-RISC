@@ -11,7 +11,12 @@
 
 
 `define col 16    // 16 bits instruction memory, data memory
-`define row_i 32  // instruction memory, instructions number, this number can be changed. Adding more instructions to verify your design is a good idea.
-`define row_d 16  // The number of data in data memory.  
 
+`define bits_size_i 3
+`define row_i (1 << `bits_size_i)
+//`define row_i 16
+
+`define bits_size_d 5
+`define row_d (1 << `bits_size_d)
+//`define row_d 16
 `endif

@@ -7,29 +7,29 @@ module Risc16(
   input clk
   );
   
-  wire jump, bne, beq, mem_read, mem_write, alu_src, reg_dst, mem_to_reg, reg_write;
+  wire jump, bne, beq, mem_read_en, mem_write_en, alu_src, reg_dst, mem_to_reg, reg_write_en;
   wire [2:0] alu_op;
   wire [3:0] opcode;
   
   // Datapath
-  Datapath_Unit datapath
+  DatapathUnit datapath
   (
     .clk(clk),
     .jump(jump),
     .beq(beq),
-    .mem_read(mem_read),
-    .mem_write(mem_write),
+    .mem_read_en(mem_read_en),
+    .mem_write_en(mem_write_en),
     .alu_src(alu_src),
     .reg_dst(reg_dst),
     .mem_to_reg(mem_to_reg),
-    .reg_write(reg_write),
+    .reg_write_en(reg_write_en),
     .bne(bne),
     .alu_op(alu_op),
     .opcode(opcode)
   );
  
   // control unit
-  Control_Unit control
+  ControlUnit control
   (
     .opcode(opcode),
     .reg_dst(reg_dst),
@@ -38,10 +38,10 @@ module Risc16(
     .jump(jump),
     .bne(bne),
     .beq(beq),
-    .mem_read(mem_read),
-    .mem_write(mem_write),
+    .mem_read_en(mem_read_en),
+    .mem_write_en(mem_write_en),
     .alu_src(alu_src),
-    .reg_write(reg_write)
+    .reg_write_en(reg_write_en)
   );
 
 endmodule

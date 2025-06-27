@@ -11,42 +11,32 @@ module DataMemory(
   input [15:0]   mem_access_addr,
  
   // write port
-  input [15:0]   mem_write_data,
+  input [15:0]   mem_in,
   input          mem_write_en,
   input          mem_read_en,
   // read port
-  output [15:0]  mem_read_data
+  output [15:0]  mem_out
   );
 
+  // create the memory
   reg [`col - 1:0] memory [`row_d - 1:0];
-  integer f;
   
-  // hard coded 8 lines of data memory - should change this
-  wire [2:0] ram_addr = mem_access_addr[2:0];
+  // memory access will wrap at the limit of the number of words
+  wire [`bits_size_d - 1:0] ram_addr = mem_access_addr[`bits_size_d - 1:0];
   
   initial
     begin
       $readmemb("test_data.mem", memory);
-
- //     $monitor("time: %0t memory[0] = %b", $time, memory[0]);  
- //     $monitor("time: %0t memory[1] = %b", $time, memory[1]);      
- //     $monitor("time: %0t memory[2] = %b", $time, memory[2]);  
- //     $monitor("time: %0t memory[3] = %b", $time, memory[3]);  
- //     $monitor("time: %0t memory[4] = %b", $time, memory[4]);  
- //     $monitor("time: %0t memory[5] = %b", $time, memory[5]);  
- //     $monitor("time; %0t memory[6] = %b", $time, memory[6]);  
- //     $monitor("time; %0t memory[7] = %b", $time, memory[7]);        
- //     `simulation_time;
     end
  
   always @(posedge clk) begin
     if (mem_write_en)
       begin  
-        memory[ram_addr] <= mem_write_data;
+        memory[ram_addr] <= mem_in;
         
-        $display("Writing to RAM: memory[%d] = %b", ram_addr, mem_write_data);
+        $display("Writing to RAM: memory[%d] = %b", ram_addr, mem_in);
       end
   end
-  assign mem_read_data = (mem_read_en == 1'b1) ? memory[ram_addr]: 16'd0; 
+  assign mem_out = (mem_read_en == 1'b1) ? memory[ram_addr]: 16'd0; 
 
 endmodule

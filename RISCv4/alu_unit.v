@@ -32,8 +32,4 @@ module ALU(
     end 
 
   assign zero = (result==16'd0) ? 1'b1: 1'b0;
-
-  //initial   $monitor("ALU [%b] %b", alu_control, result);
-  
- 
 endmodule

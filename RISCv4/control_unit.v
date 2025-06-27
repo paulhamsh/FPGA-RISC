@@ -3,10 +3,10 @@
 // FPGA projects, VHDL projects, Verilog projects 
 // Verilog code for RISC Processor 
 // Verilog code for Control Unit 
-module Control_Unit(
+module ControlUnit(
       input[3:0] opcode,
       output reg[2:0] alu_op,
-      output reg jump,beq,bne,mem_read,mem_write,alu_src,reg_dst,mem_to_reg,reg_write    
+      output reg jump ,beq, bne, mem_read_en, mem_write_en, alu_src, reg_dst, mem_to_reg, reg_write_en    
       );
 
 
@@ -18,9 +18,9 @@ module Control_Unit(
           reg_dst = 1'b0;      
           alu_src = 1'b1;
           mem_to_reg = 1'b1;
-          reg_write = 1'b1;
-          mem_read = 1'b1;
-          mem_write = 1'b0;
+          reg_write_en = 1'b1;
+          mem_read_en = 1'b1;
+          mem_write_en = 1'b0;
           beq = 1'b0;
           bne = 1'b0;
           //alu_op = 3'b010;
@@ -32,9 +32,9 @@ module Control_Unit(
           reg_dst = 1'b0;
           alu_src = 1'b1;
           mem_to_reg = 1'b0;
-          reg_write = 1'b0;
-          mem_read = 1'b0;      
-          mem_write = 1'b1;
+          reg_write_en = 1'b0;
+          mem_read_en = 1'b0;      
+          mem_write_en = 1'b1;
           beq = 1'b0;
           bne = 1'b0;
           //alu_op = 3'b010;
@@ -46,9 +46,9 @@ module Control_Unit(
           reg_dst = 1'b1;
           alu_src = 1'b0;
           mem_to_reg = 1'b0;
-          reg_write = 1'b1;
-          mem_read = 1'b0;
-          mem_write = 1'b0;
+          reg_write_en = 1'b1;
+          mem_read_en = 1'b0;
+          mem_write_en = 1'b0;
           beq = 1'b0;
           bne = 1'b0;
           //alu_op = 3'b000;
@@ -60,9 +60,9 @@ module Control_Unit(
           reg_dst = 1'b1;
           alu_src = 1'b0;
           mem_to_reg = 1'b0;
-          reg_write = 1'b1;
-          mem_read = 1'b0;
-          mem_write = 1'b0;
+          reg_write_en = 1'b1;
+          mem_read_en = 1'b0;
+          mem_write_en = 1'b0;
           beq = 1'b0;
           bne = 1'b0;
           //alu_op = 3'b000;
@@ -74,9 +74,9 @@ module Control_Unit(
           reg_dst = 1'b1;
           alu_src = 1'b0;
           mem_to_reg = 1'b0;
-          reg_write = 1'b1;
-          mem_read = 1'b0;
-          mem_write = 1'b0;
+          reg_write_en = 1'b1;
+          mem_read_en = 1'b0;
+          mem_write_en = 1'b0;
           beq = 1'b0;
           bne = 1'b0;
           //alu_op = 3'b000;
@@ -88,9 +88,9 @@ module Control_Unit(
           reg_dst = 1'b1;
           alu_src = 1'b0;
           mem_to_reg = 1'b0;
-          reg_write = 1'b1;
-          mem_read = 1'b0;
-          mem_write = 1'b0;
+          reg_write_en = 1'b1;
+          mem_read_en = 1'b0;
+          mem_write_en = 1'b0;
           beq = 1'b0;
           bne = 1'b0;
           //alu_op = 3'b000;
@@ -102,9 +102,9 @@ module Control_Unit(
           reg_dst = 1'b1;
           alu_src = 1'b0;
           mem_to_reg = 1'b0;
-          reg_write = 1'b1;
-          mem_read = 1'b0;
-          mem_write = 1'b0;
+          reg_write_en = 1'b1;
+          mem_read_en = 1'b0;
+          mem_write_en = 1'b0;
           beq = 1'b0;
           bne = 1'b0;
           //alu_op = 3'b000;
@@ -116,9 +116,9 @@ module Control_Unit(
           reg_dst = 1'b1;
           alu_src = 1'b0;
           mem_to_reg = 1'b0;
-          reg_write = 1'b1;
-          mem_read = 1'b0;
-          mem_write = 1'b0;
+          reg_write_en = 1'b1;
+          mem_read_en = 1'b0;
+          mem_write_en = 1'b0;
           beq = 1'b0;
           bne = 1'b0;
           //alu_op = 3'b000;
@@ -130,9 +130,9 @@ module Control_Unit(
           reg_dst = 1'b1;
           alu_src = 1'b0;
           mem_to_reg = 1'b0;
-          reg_write = 1'b1;
-          mem_read = 1'b0;
-          mem_write = 1'b0;
+          reg_write_en = 1'b1;
+          mem_read_en = 1'b0;
+          mem_write_en = 1'b0;
           beq = 1'b0;
           bne = 1'b0;
           //alu_op = 3'b000;
@@ -144,9 +144,9 @@ module Control_Unit(
           reg_dst = 1'b1;
           alu_src = 1'b0;
           mem_to_reg = 1'b0;
-          reg_write = 1'b1;
-          mem_read = 1'b0;
-          mem_write = 1'b0;
+          reg_write_en = 1'b1;
+          mem_read_en = 1'b0;
+          mem_write_en = 1'b0;
           beq = 1'b0;
           bne = 1'b0;
           alu_op = 3'b111; // slt
@@ -157,9 +157,9 @@ module Control_Unit(
           reg_dst = 1'b0;
           alu_src = 1'b0;
           mem_to_reg = 1'b0;
-          reg_write = 1'b0;
-          mem_read = 1'b0;
-          mem_write = 1'b0;
+          reg_write_en = 1'b0;
+          mem_read_en = 1'b0;
+          mem_write_en = 1'b0;
           beq = 1'b1;
           bne = 1'b0;
           //alu_op = 3'b001;
@@ -171,9 +171,9 @@ module Control_Unit(
           reg_dst = 1'b0;
           alu_src = 1'b0;
           mem_to_reg = 1'b0;
-          reg_write = 1'b0;
-          mem_read = 1'b0;
-          mem_write = 1'b0;
+          reg_write_en = 1'b0;
+          mem_read_en = 1'b0;
+          mem_write_en = 1'b0;
           beq = 1'b0;
           bne = 1'b1;
           //alu_op = 3'b001
@@ -185,9 +185,9 @@ module Control_Unit(
           reg_dst = 1'b0;
           alu_src = 1'b0;
           mem_to_reg = 1'b0;
-          reg_write = 1'b0;
-          mem_read = 1'b0;
-          mem_write = 1'b0;
+          reg_write_en = 1'b0;
+          mem_read_en = 1'b0;
+          mem_write_en = 1'b0;
           beq = 1'b0;
           bne = 1'b0;
           //alu_op = 3'b000;
@@ -198,9 +198,9 @@ module Control_Unit(
           reg_dst = 1'b1;
           alu_src = 1'b0;
           mem_to_reg = 1'b0;
-          reg_write = 1'b1;
-          mem_read = 1'b0;
-          mem_write = 1'b0;
+          reg_write_en = 1'b1;
+          mem_read_en = 1'b0;
+          mem_write_en = 1'b0;
           beq = 1'b0;
           bne = 1'b0;
           alu_op = 3'b000;

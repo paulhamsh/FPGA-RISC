@@ -3,38 +3,37 @@
 // FPGA projects, VHDL projects, Verilog projects 
 // Verilog code for RISC Processor 
 // Verilog code for Data Path of the processor
-module Datapath_Unit(
+module DatapathUnit(
   input       clk,
-  input       jump, beq, mem_read, mem_write, alu_src, reg_dst, mem_to_reg, reg_write, bne,
+  input       jump, beq, mem_read_en, mem_write_en, alu_src, reg_dst, mem_to_reg, reg_write_en, bne,
   input[2:0]  alu_op,
   output[3:0] opcode
   );
   reg  [15:0] pc_current;
   wire [15:0] pc_next;
-  
+
   wire [15:0] pc_plus_1;
   wire [15:0] pc_jump;
   wire [15:0] pc_branch;
   wire [15:0] pc_temp;
-    
+
+  wire        branch_control;
+      
   wire [15:0] instr;
   
   wire [2:0]  rd;
   wire [15:0] rd_value;
-  
   wire [2:0]  rs1;
   wire [15:0] rs1_value;
   wire [2:0]  rs2;
   wire [15:0] rs2_value;
   
   wire [15:0] ext_imm;
-  wire [15:0] read_data;
-  wire [15:0] ALU_out;
+  wire [15:0] alu_in;
+  wire [15:0] alu_out;
   wire        zero_flag;
 
-
-  wire        branch_control;
-  wire [15:0] mem_read_data;
+  wire [15:0] mem_out;
  
   // PC 
   initial begin
@@ -47,21 +46,21 @@ module Datapath_Unit(
     pc_current <= pc_next;
   end
   
-  // instruction memory
+  // Instruction memory
   InstructionMemory im(.pc(pc_current),.instruction(instr));
 
   // multiplexer MUX_REG_DEST
   assign rd = (reg_dst == 1'b1) ? instr[5:3] :instr[8:6];
  
-  // register file
+  // Register allocations
   assign rs1 = instr[11:9];
   assign rs2 = instr[8:6];
 
-  // GENERAL PURPOSE REGISTERs
+  // Registers
   RegisterUnit reg_file
   (
     .clk(clk),
-    .reg_write_en(reg_write),
+    .reg_write_en(reg_write_en),
     .rd(rd),
     .rd_value(rd_value),
     .rs1(rs1),
@@ -74,11 +73,10 @@ module Datapath_Unit(
   assign ext_imm = {{10{instr[5]}},instr[5:0]};  
  
   // multiplexer alu_src
-  assign read_data = (alu_src == 1'b1) ? ext_imm : rs2_value;
+  assign alu_in = (alu_src == 1'b1) ? ext_imm : rs2_value;
  
   // ALU 
-  ALU alu_unit(.a(rs1_value),.b(read_data),.alu_control(alu_op),.result(ALU_out),.zero(zero_flag));
-
+  ALU alu_unit(.a(rs1_value), .b(alu_in), .alu_control(alu_op), .result(alu_out), .zero(zero_flag));
 
   // PC MUX
   // Based on PC_beq, PC_bne (and zero flag), jump decide on next PC 
@@ -96,15 +94,15 @@ module Datapath_Unit(
   DataMemory dm
   (
     .clk(clk),
-    .mem_access_addr(ALU_out),
-    .mem_write_data(rs2_value),
-    .mem_write_en(mem_write),
-    .mem_read_en(mem_read),
-    .mem_read_data(mem_read_data)
+    .mem_access_addr(alu_out),
+    .mem_in(rs2_value),
+    .mem_write_en(mem_write_en),
+    .mem_read_en(mem_read_en),
+    .mem_out(mem_out)
   );
  
    // write back
-   assign rd_value = (mem_to_reg == 1'b1)?  mem_read_data: ALU_out;
+   assign rd_value = (mem_to_reg == 1'b1)?  mem_out: alu_out;
    // output to control unit
    assign opcode = instr[15:12];
 
