@@ -3,15 +3,16 @@
 // FPGA projects, VHDL projects, Verilog projects 
 // Verilog code for RISC Processor 
 
-module Risc_16_bit(
+module Risc16(
   input clk
   );
   
-  wire jump,bne,beq,mem_read,mem_write,alu_src,reg_dst,mem_to_reg,reg_write;
+  wire jump, bne, beq, mem_read, mem_write, alu_src, reg_dst, mem_to_reg, reg_write;
   wire [2:0] alu_op;
   wire [3:0] opcode;
+  
   // Datapath
-  Datapath_Unit DU
+  Datapath_Unit datapath
   (
     .clk(clk),
     .jump(jump),

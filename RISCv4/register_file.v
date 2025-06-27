@@ -4,18 +4,18 @@
 // Verilog code for RISC Processor 
 // Verilog code for register file
 
-module GPRs(
+module RegisterUnit(
   input    clk,
   // write port
   input         reg_write_en,
-  input  [2:0]  reg_write_dest, 
-  input  [15:0] reg_write_data,
+  input  [2:0]  rd, 
+  input  [15:0] rd_value,
   //read port 1
-  input  [2:0]  reg_read_addr_1,
-  output [15:0] reg_read_data_1,
+  input  [2:0]  rs1,
+  output [15:0] rs1_value,
   //read port 2
-  input  [2:0]  reg_read_addr_2,
-  output [15:0] reg_read_data_2
+  input  [2:0]  rs2,
+  output [15:0] rs2_value
   );
   reg    [15:0] reg_array [7:0];
 
@@ -31,13 +31,13 @@ module GPRs(
   
   always @ (posedge clk ) begin
     if(reg_write_en) begin
-      reg_array[reg_write_dest] <= reg_write_data;
+      reg_array[rd] <= rd_value;
     end
   end
  
  
-  assign reg_read_data_1 = reg_array[reg_read_addr_1];
-  assign reg_read_data_2 = reg_array[reg_read_addr_2];
+  assign rs1_value = reg_array[rs1];
+  assign rs2_value = reg_array[rs2];
 
 
 endmodule
