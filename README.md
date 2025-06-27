@@ -20,6 +20,7 @@ wire [2:0] ram_addr=mem_access_addr[2:0];
 ```
 
 Changed in RISCv4 to be driven by parameters in ```parameter.v```    
+A ```bits_size_i``` of 5 will be 1 << 5 words, which is 32 words    
 
 ```
 `define bits_size_i 5
