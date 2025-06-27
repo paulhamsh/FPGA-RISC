@@ -99,7 +99,7 @@ module Datapath_Unit(
     .mem_access_addr(ALU_out),
     .mem_write_data(rs2_value),
     .mem_write_en(mem_write),
-    .mem_read(mem_read),
+    .mem_read_en(mem_read),
     .mem_read_data(mem_read_data)
   );
  

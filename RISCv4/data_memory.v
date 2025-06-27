@@ -13,7 +13,7 @@ module DataMemory(
   // write port
   input [15:0]   mem_write_data,
   input          mem_write_en,
-  input          mem_read,
+  input          mem_read_en,
   // read port
   output [15:0]  mem_read_data
   );
@@ -47,6 +47,6 @@ module DataMemory(
         $display("Writing to RAM: memory[%d] = %b", ram_addr, mem_write_data);
       end
   end
-  assign mem_read_data = (mem_read == 1'b1) ? memory[ram_addr]: 16'd0; 
+  assign mem_read_data = (mem_read_en == 1'b1) ? memory[ram_addr]: 16'd0; 
 
 endmodule
