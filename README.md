@@ -19,5 +19,9 @@ The data bus address width is 16 bits, but is set at 3 bits in ```data_memory.v`
 ```
 wire [2:0] ram_addr=mem_access_addr[2:0];
 ```
-|
 
+# Datapath for RISCv4
+
+<p align="center">
+  <img src="https://github.com/paulhamsh/FPGA-RISC/blob/main/RISCv4.jpg" width="400">
+</p>
