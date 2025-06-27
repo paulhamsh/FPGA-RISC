@@ -11,13 +11,23 @@ Simple RISC processor based on the fpga4students example
 | RISCv4       | Changed many names of modules and wires, added full test bench to single step each instruction and check outputs                                                              |
 
 
-# Data and address bus widths
-
+# Data and address bus widths 
 The PC address width is 16 bits, but a jump can only be 12 bits, and a branch can be a 6 bit signed offset (+31, -32).     
 The data bus address width is 16 bits, but is set at 3 bits in ```data_memory.v```   
 
 ```
 wire [2:0] ram_addr=mem_access_addr[2:0];
+```
+
+Changed in RISCv4 to be driven by parameters in ```parameter.v```    
+
+```
+`define bits_size_i 5
+`define row_i (1 << `bits_size_i)
+
+`define bits_size_d 5
+`define row_d (1 << `bits_size_d)
+
 ```
 
 # Datapath for RISCv4
