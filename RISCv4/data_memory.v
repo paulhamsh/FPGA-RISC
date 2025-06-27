@@ -5,7 +5,7 @@
 // Verilog code for data Memory
 
 
-module Data_Memory(
+module DataMemory(
   input clk,
   // address input, shared by read and write port
   input [15:0]   mem_access_addr,

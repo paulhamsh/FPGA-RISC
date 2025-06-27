@@ -4,9 +4,9 @@
 // Verilog code for RISC Processor 
 // Verilog code for Data Path of the processor
 module Datapath_Unit(
-  input clk,
-  input jump, beq, mem_read, mem_write, alu_src, reg_dst, mem_to_reg, reg_write,bne,
-  input[2:0] alu_op,
+  input       clk,
+  input       jump, beq, mem_read, mem_write, alu_src, reg_dst, mem_to_reg, reg_write, bne,
+  input[2:0]  alu_op,
   output[3:0] opcode
   );
   reg  [15:0] pc_current;
@@ -19,21 +19,21 @@ module Datapath_Unit(
     
   wire [15:0] instr;
   
-  wire [2:0] rd;
+  wire [2:0]  rd;
   wire [15:0] rd_value;
   
-  wire [2:0] rs1;
+  wire [2:0]  rs1;
   wire [15:0] rs1_value;
-  wire [2:0] rs2;
+  wire [2:0]  rs2;
   wire [15:0] rs2_value;
   
   wire [15:0] ext_imm;
   wire [15:0] read_data;
   wire [15:0] ALU_out;
-  wire zero_flag;
+  wire        zero_flag;
 
 
-  wire branch_control;
+  wire        branch_control;
   wire [15:0] mem_read_data;
  
   // PC 
@@ -48,7 +48,7 @@ module Datapath_Unit(
   end
   
   // instruction memory
-  Instruction_Memory im(.pc(pc_current),.instruction(instr));
+  InstructionMemory im(.pc(pc_current),.instruction(instr));
 
   // multiplexer MUX_REG_DEST
   assign rd = (reg_dst == 1'b1) ? instr[5:3] :instr[8:6];
@@ -93,7 +93,7 @@ module Datapath_Unit(
   assign pc_next = (jump == 1'b1) ? pc_jump :  pc_temp;
 
   // Data memory 
-  Data_Memory dm
+  DataMemory dm
   (
     .clk(clk),
     .mem_access_addr(ALU_out),
