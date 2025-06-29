@@ -12,22 +12,21 @@ module IOPorts(
   output [15:0]  io_out,
   
   input [15:0]   io_read_device,
-  output [15:0]  io_write_device
+  output reg [15:0]  io_write_device
   );
   
   wire is_port_access;
+  reg [15:0] io_read_store;
   
   assign is_port_access = io_access_addr[15];
 
   always @(posedge clk) begin
-    if (io_write_en && is_port_access)
+    if (io_write_en && is_port_access)// && is_port_access)
       begin  
-        
+        io_write_device <= io_read_device;
+        io_read_store <= io_read_device;
       end
   end
   
-  assign io_out = (io_read_en == 1'b1) ?16'hffff: 16'd0;
-  
-  // temporary part to prove it
-  assign io_write_device = io_read_device;
+  assign io_out = (io_read_en == 1'b1) ? io_read_device : 16'd0;
 endmodule

@@ -55,20 +55,24 @@ endmodule
 module top(
   input CLK100MHZ,
   input [15:0] SW,
-  output reg [15:0] LED
+  output [15:0] LED
   );
   
-  wire [15:0] io_led_value;
+  //wire [15:0] io_led_value;
   
   Risc16 risc(
     .clk(CLK100MHZ),
     .io_read_device(SW),
-    .io_write_device(io_led_value)
+    .io_write_device(LED)
     );
 
+//assign LED = io_led_value;
+
+/*
 always @(posedge CLK100MHZ)
   begin
     LED <= io_led_value;
   end
+*/
 
 endmodule
