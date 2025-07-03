@@ -4,12 +4,16 @@
 // Verilog code for RISC Processor 
 // Verilog code for Data Path of the processor
 module DatapathUnit(
-  input        clk,
-  input        jump, beq, mem_read_en, mem_write_en, alu_src, reg_dst, mem_to_reg, reg_write_en, bne,
-  input[2:0]   alu_op,
-  output[3:0]  opcode,
-  input [15:0] io_read_device,
-  output[15:0] io_write_device
+  input         clk,
+  input         jump, beq, data_read_en, data_write_en, alu_src, reg_dst, mem_to_reg, reg_write_en, bne,
+  input  [2:0]  alu_op,
+  output [3:0]  opcode,
+ 
+  output [15:0] io_address,
+  output [15:0] io_write_value,
+  input  [15:0] io_read_value,
+  output        io_write_en,
+  output        io_read_en
   );
   
   reg  [15:0] pc_current;
@@ -36,9 +40,19 @@ module DatapathUnit(
   wire [15:0] alu_out;
   wire        zero_flag;
 
-  wire [15:0] mem_out;
-  wire [15:0] io_out;
-  wire [15:0] iomem_out;
+  wire [15:0] mem_read_value;
+  // Note that io_read_value is part of the interface
+  wire [15:0] data_read_value;
+  
+  wire [15:0] data_address;
+  wire [15:0] mem_address;
+  // Note that io_address is part of the interface
+
+  wire        is_mem;
+  wire        is_io;
+  wire        mem_read_en;
+  wire        mem_write_en;
+  // Note that io_read_en and io_write_en are part of the interface
   
   // PC 
   initial begin
@@ -87,42 +101,49 @@ module DatapathUnit(
   // Based on PC_beq, PC_bne (and zero flag), jump decide on next PC 
   // If nothing else, PC will increment by one 
  
-  assign branch_control = (beq & zero_flag) | (bne & ~zero_flag);
-
+  // assign branch_control = (beq & zero_flag) | (bne & ~zero_flag);
+  assign branch_control = (beq && zero_flag) || (bne && ~zero_flag);
+  
   assign pc_plus_1 = pc_current + 16'd1;  
   assign pc_branch = pc_plus_1 + ext_imm;
   assign pc_temp = (branch_control == 1'b1) ? pc_branch : pc_plus_1;
   assign pc_jump = {pc_plus_1[15:12], instr[11:0]};
   assign pc_next = (jump == 1'b1) ? pc_jump :  pc_temp;
 
+  // IO and data memory selections
+  assign data_address = alu_out;                    // alu out is an address
+  assign io_address = {1'b0, data_address[14:0]};   // just set top bit to 0
+  assign mem_address = data_address;                // top bit already 0
+  
+  assign is_mem = ~data_address[15];                // top bit is 0
+  assign is_io = data_address[15];                  // top bit is 1
+  
+  assign mem_read_en = data_read_en && is_mem; 
+  assign mem_write_en = data_write_en && is_mem;
+  
+  assign io_read_en = data_read_en && is_io;
+  assign io_write_en = data_write_en && is_io;
+
+  
   // Data memory 
   DataMemory dm
   (
     .clk(clk),
-    .mem_access_addr(alu_out),
+    .mem_access_addr(mem_address),
     .mem_in(rs2_value),
     .mem_write_en(mem_write_en),
     .mem_read_en(mem_read_en),
-    .mem_out(mem_out)
+    .mem_out(mem_read_value)
   );
  
-  // IO Ports 
-  IOPorts io
-  (
-    .clk(clk),
-    .io_access_addr(alu_out),
-    .io_in(rs2_value),
-    .io_write_en(mem_write_en),
-    .io_read_en(mem_read_en),
-    .io_out(io_out),
-    .io_read_device(io_read_device),
-    .io_write_device(io_write_device)
-  );
+  // IO data path
+  
+  assign io_write_value = rs2_value;
   
    // write back
-   //assign io_out = 16'd0;
-   assign iomem_out = alu_out[15] ? io_out : mem_out;
-   assign rd_value = (mem_to_reg == 1'b1)?  iomem_out: alu_out;
+  assign data_read_value = is_io ? io_read_value : mem_read_value;
+  assign rd_value = (mem_to_reg == 1'b1)?  data_read_value: alu_out;
+   
    // output to control unit
    assign opcode = instr[15:12];
 

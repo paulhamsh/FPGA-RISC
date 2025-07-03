@@ -24,18 +24,16 @@ module DataMemory(
   // memory access will wrap at the limit of the number of words
   wire [`bits_size_d - 1:0] ram_addr = mem_access_addr[`bits_size_d - 1:0];
   
-  wire is_mem_access;
-  
   // check to see if memory access or io port access
-  assign is_mem_access = ~mem_access_addr[15];
+  //assign is_mem_access = ~mem_access_addr[15];
     
   initial
     begin
-      $readmemb("test_data3.mem", memory);
+      $readmemb("test_data.mem", memory);
     end
  
   always @(posedge clk) begin
-    if (mem_write_en && is_mem_access)
+    if (mem_write_en)
       begin  
         memory[ram_addr] <= mem_in;
         
