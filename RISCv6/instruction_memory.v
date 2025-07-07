@@ -1,4 +1,8 @@
-`include "parameter.v"
+`define inst_bits 16    // 16 bits instruction memory, data memory
+
+`define size_inst 5
+`define row_i (1 << `size_inst)
+
 // fpga4student.com 
 // FPGA projects, VHDL projects, Verilog projects 
 // Verilog code for RISC Processor 
@@ -11,10 +15,10 @@ module InstructionMemory(
   );
 
   // create the memory
-  reg [`col - 1:0] memory [`row_i - 1:0];
+  reg [`inst_bits-1:0] memory [`row_i-1:0];
   
   // memory access will wrap at the limit of the number of words
-  wire [`bits_size_i - 1 : 0] rom_addr = pc[`bits_size_i - 1 : 0];
+  wire [`size_inst-1 : 0] rom_addr = pc[`size_inst-1 : 0];
   
   initial
     begin

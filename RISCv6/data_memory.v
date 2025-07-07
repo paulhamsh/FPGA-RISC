@@ -1,9 +1,12 @@
-`include "parameter.v"
 // fpga4student.com 
 // FPGA projects, VHDL projects, Verilog projects 
 // Verilog code for RISC Processor 
 // Verilog code for data Memory
 
+`define data_bits 16    // 16 bits instruction memory, data memory
+
+`define size_data 5
+`define row_d (1 << `size_data)
 
 module DataMemory(
   input clk,
@@ -19,10 +22,10 @@ module DataMemory(
   );
 
   // create the memory
-  reg [`col - 1:0] memory [`row_d - 1:0];
+  reg [`data_bits-1:0] memory [`row_d-1:0];
   
   // memory access will wrap at the limit of the number of words
-  wire [`bits_size_d - 1:0] ram_addr = mem_access_addr[`bits_size_d - 1:0];
+  wire [`size_data-1:0] ram_addr = mem_access_addr[`size_data-1:0];
   
   // check to see if memory access or io port access
   //assign is_mem_access = ~mem_access_addr[15];

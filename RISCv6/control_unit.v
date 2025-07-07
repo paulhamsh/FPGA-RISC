@@ -3,12 +3,12 @@
 // FPGA projects, VHDL projects, Verilog projects 
 // Verilog code for RISC Processor 
 // Verilog code for Control Unit 
+
 module ControlUnit(
       input [3:0] opcode,
       output reg[2:0] alu_op,
       output reg jump ,beq, bne, data_read_en, data_write_en, alu_src, reg_dst, mem_to_reg, reg_write_en    
       );
-
 
   always @(*)
   begin
