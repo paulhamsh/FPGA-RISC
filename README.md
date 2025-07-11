@@ -64,8 +64,8 @@ jmp    1101   -------offset12------
 
 ```
        xxxx   xxx   xxx   xxx   xxx
-ld     0000   regB  regA  --value--
-st     0001   regB  regA  --value--
+ld     0000   regB  regA  -offset6-
+st     0001   regB  regA  -offset6-
 add    0010   regB  regC  regA  000
 sub    0011   regB  regC  regA  000	
 inv    0100   regB  000   regA  000
