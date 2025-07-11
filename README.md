@@ -36,8 +36,8 @@ lsr    rd,   rs1,  rs2                         rd  := rs1 >> rs2
 and    rd,   rs1,  rs2                         rd  := rs1 & rs2
 or     rd,   rs1,  rs2                         rd  := rs1 | rs2
 slt    rd,   rs1,  rs2                         rd  := 1 if rs1 < rs2 else 0  
-beq    rs1,  rs2,  offset6                     pc  := pc + 1 + offset6 if rs1 == rs2
-bne    rs1,  rs2,  offset6                     pc  := pc + 1 + offset6 if rs1 != rs2
+beq    rs1,  rs2,  offset6                     pc  := pc + 1 + offset6 if rs1 == rs2  # next instruction + offset6
+bne    rs1,  rs2,  offset6                     pc  := pc + 1 + offset6 if rs1 != rs2  # next instruction + offset6
 jmp    offset12                                pc  := offset12
 ```
 
