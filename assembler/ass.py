@@ -42,7 +42,6 @@ def tokenise(txt) :
     value = None
     jmp_label = None
 
-    print(sp)
     for c in sp:
         if len(c) > 0:             # don't process an empty cell
             if c[-1] == ":":
@@ -62,6 +61,8 @@ def tokenise(txt) :
           
     return label, cmd, regA, regB, regC, value, jmp_label
 
+# Instruction formats
+
 # ld     rd,  rs1(offset6)
 # st     rs2, rs1(offset6)
 # add    rd,  rs1, rs2
@@ -77,7 +78,6 @@ def tokenise(txt) :
 # beq  1011  rs1  rs2  -offset6-
 # bne  1100  rs1  rs2  -offset6-
 # 1d   1101  ------offset12-----
-
 
 # ld   0000  regB regA --value--
 # st   0001  regB regA --value--
@@ -108,7 +108,7 @@ def assemble(code):
     line_number = 0
     for line in code:
         (label, cmd, regA, regB, regC, value, jmp_label) = tokenise(line)
-        print(">>", label, cmd, regA, regB, regC, value, jmp_label)
+        #print(">>", label, cmd, regA, regB, regC, value, jmp_label)
         machine_code = 0
     
         # Calculate a jump offset
@@ -163,7 +163,18 @@ def assemble(code):
 
 ##############################################################
 
-f = open("test1.txt", mode='r')
+
+import sys, os
+
+if len(sys.argv) > 1:
+    filename = sys.argv[1]
+    splitname = re.split("\.", filename)
+    outname = splitname[0] +".mc"
+else:
+    filename = "test1.txt"
+    outname = None
+
+f = open(filename, mode='r')
 code = f.readlines()
 code_clean =[l.strip() for l in code]
 f.close()
@@ -175,14 +186,17 @@ for l in code_clean:
     print(l)
 
 print()
+
 line_no = 0
 for v in fmc:
     show_machine_code(line_no, v)
     line_no += 1
 
-print()
-for v in fmc:
-    show_machine_code(None, v)
+if outname:
+    f = open(outname, mode='w')
+    for v in fmc:
+        print("{:016b}".format(v), file=f)
+    f.close()
 
 ##############################################################
 
