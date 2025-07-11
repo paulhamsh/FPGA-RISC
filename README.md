@@ -21,6 +21,8 @@ A description of each instruction and the machine code format associated with it
 offset6 is signed 6 bits (twos complement)    
 offset12 is unsigned    
 
+## Instructions  
+
 ```
 opcode regA, regB, regC
 
@@ -37,7 +39,11 @@ slt    rd,   rs1,  rs2                         rd  := 1 if rs1 < rs2 else 0
 beq    rs1,  rs2,  offset6                     pc  := pc + 1 + offset6 if rs1 == rs2
 bne    rs1,  rs2,  offset6                     pc  := pc + 1 + offset6 if rs1 != rs2
 jmp    offset12                                pc  := offset12
+```
 
+## Machine code format     
+
+```
        xxxx   xxx   xxx   xxx   xxx
 ld     0000   rs1   rd    -offset6-
 st     0001   rs1   rs2   -offset6-
@@ -52,7 +58,11 @@ slt    1001   rs1   rs2   rd    000
 beq    1011   rs1   rs2   -offset6-
 bne    1100   rs1   rs2   -offset6-
 jmp    1101   -------offset12------
+```
 
+## Layout mapped to instruction register order   
+
+```
        xxxx   xxx   xxx   xxx   xxx
 ld     0000   regB  regA  --value--
 st     0001   regB  regA  --value--
