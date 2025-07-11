@@ -15,16 +15,20 @@ Simple RISC processor based on the fpga4students example
 
 # Instructions
 
-**Note** 
-offset6 is signed 6 bits (twos complement)
-offset12 is unsigned
+A description of each instruction and the machine code format associated with it.
+
+**Note**     
+offset6 is signed 6 bits (twos complement)    
+offset12 is unsigned    
 
 ```
+opcode regA, regB, regC
+
 ld     rd,   rs1(offset6)                      rs  := mem[rs1 + offset6]
 st     rs2,  rs1(offset6)                      mem[rs1 + offset6] := rs2
 add    rd,   rs1,  rs2                         rd  := rs1 + rs2
 sub    rd,   rs1,  rs2                         rd  := rs1 - rs2   
-inv    rd,   rs1	                             rd  := !rs1
+inv    rd,   rs1	                          rd  := !rs1
 lsl    rd,   rs1,  rs2                         rd  := rs1 << rs2
 lsr    rd,   rs1,  rs2                         rd  := rs1 >> rs2
 and    rd,   rs1,  rs2                         rd  := rs1 & rs2
@@ -52,8 +56,14 @@ jmp    1101   -------offset12------
        xxxx   xxx   xxx   xxx   xxx
 ld     0000   regB  regA  --value--
 st     0001   regB  regA  --value--
-add    0010   regB  regC  regA  000	
+add    0010   regB  regC  regA  000
+sub    0011   regB  regC  regA  000	
 inv    0100   regB  000   regA  000
+lsl    0101   regB  regC  regA  000
+lsr    0110   regB  regC  regA  000
+and    0111   regB  regC  regA  000
+or     1000   regB  regC  regA  000
+slt    1001   regB  regC  regA  000
 beq    1011   regA  regB  --value--
 bne    1100   regA  regB  --value--
 jmp    1101   ------offset 12------
