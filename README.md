@@ -12,6 +12,54 @@ Simple RISC processor based on the fpga4students example
 | RISCv5       | Memory mapped IO (LED and switches tested on Digilent Nexys 4 DDR)                                                                                                            |
 | RISCv6       | Introduced an Address Decoder unit to make the IO / memory decoder more modular                                                                                               |
 
+
+# Instructions
+
+**Note** 
+offset6 is signed 6 bits (twos complement)
+offset12 is unsigned
+
+```
+ld     rd,   rs1(offset6)                      rs  := mem[rs1 + offset6]
+st     rs2,  rs1(offset6)                      mem[rs1 + offset6] := rs2
+add    rd,   rs1,  rs2                         rd  := rs1 + rs2
+sub    rd,   rs1,  rs2                         rd  := rs1 - rs2   
+inv    rd,   rs1	                             rd  := !rs1
+lsl    rd,   rs1,  rs2                         rd  := rs1 << rs2
+lsr    rd,   rs1,  rs2                         rd  := rs1 >> rs2
+and    rd,   rs1,  rs2                         rd  := rs1 & rs2
+or     rd,   rs1,  rs2                         rd  := rs1 | rs2
+slt    rd,   rs1,  rs2                         rd  := 1 if rs1 < rs2 else 0  
+beq    rs1,  rs2,  offset6                     pc  := pc + 1 + offset6 if rs1 == rs2
+bne    rs1,  rs2,  offset6                     pc  := pc + 1 + offset6 if rs1 != rs2
+jmp    offset12                                pc  := offset12
+
+       xxxx   xxx   xxx   xxx   xxx
+ld     0000   rs1   rd    -offset6-
+st     0001   rs1   rs2   -offset6-
+add    0010   rs1   rs2   rd    000
+sub    0011   rs1   rs2   rd    000
+inv    0100   rs1   000   rd    000
+lsl    0101   rs1   rs2   rd    000
+lsr    0110   rs1   rs2   rd    000
+and    0111   rs1   rs2   rd    000
+or     1000   rs1   rs2   rd    000
+slt    1001   rs1   rs2   rd    000
+beq    1011   rs1   rs2   -offset6-
+bne    1100   rs1   rs2   -offset6-
+jmp    1101   -------offset12------
+
+       xxxx   xxx   xxx   xxx   xxx
+ld     0000   regB  regA  --value--
+st     0001   regB  regA  --value--
+add    0010   regB  regC  regA  000	
+inv    0100   regB  000   regA  000
+beq    1011   regA  regB  --value--
+bne    1100   regA  regB  --value--
+jmp    1101   ------offset 12------
+```
+
+
 # Data and address bus widths 
 The PC address width is 16 bits, but a jump can only be 12 bits, and a branch can be a 6 bit signed offset (+31, -32).     
 The data bus address width is 16 bits, but is set at 3 bits in ```data_memory.v```   
