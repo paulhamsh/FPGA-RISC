@@ -38,7 +38,7 @@ or     rd,   rs1,  rs2                         rd  := rs1 | rs2
 slt    rd,   rs1,  rs2                         rd  := 1 if rs1 < rs2 else 0  
 beq    rs1,  rs2,  offset6                     pc  := pc + 1 + offset6 if rs1 == rs2     # next instruction + offset6
 bne    rs1,  rs2,  offset6                     pc  := pc + 1 + offset6 if rs1 != rs2     # next instruction + offset6
-jmp    offset12                                pc  := offset12
+jmp    addr12                                pc  := offset12
 ```
 
 ## Machine code format     
@@ -57,7 +57,7 @@ or     1000   rs1   rs2   rd    000
 slt    1001   rs1   rs2   rd    000
 beq    1011   rs1   rs2   -offset6-
 bne    1100   rs1   rs2   -offset6-
-jmp    1101   -------offset12------
+jmp    1101   --------addr12-------
 ```
 
 ## Layout mapped to instruction register order   
@@ -74,9 +74,9 @@ lsr    0110   regB  regC  regA  000
 and    0111   regB  regC  regA  000
 or     1000   regB  regC  regA  000
 slt    1001   regB  regC  regA  000
-beq    1011   regA  regB  --value--
-bne    1100   regA  regB  --value--
-jmp    1101   ------offset 12------
+beq    1011   regA  regB  -offset6-
+bne    1100   regA  regB  -offset6-
+jmp    1101   -------addr 12-------
 ```
 
 
