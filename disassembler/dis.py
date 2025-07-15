@@ -10,6 +10,8 @@
 # beq    rs1, rs2, offset6
 # bne    rs1, rs2, offset6
 # jmp    offset12
+# lui    rd,  imm8
+# lli    rd,  imm8
 
 # ld   0000  rs1  rd   -offset6-
 # st   0001  rs1  rs2  -offset6-
@@ -18,6 +20,8 @@
 # beq  1011  rs1  rs2  -offset6-
 # bne  1100  rs1  rs2  -offset6-
 # jmp  1101  ------offset12-----
+# lui  1110  rd   0 ----imm8----
+# lli  1111  rd   0 ----imm8----
 
 # ld   0000  regB regA --value--
 # st   0001  regB regA --value--
@@ -26,11 +30,12 @@
 # beq  1011  regA regB --value--
 # bne  1100  regA regB --value--
 # jmp  1101  -----offset 12-----
-	
+# lui  1110  regA  0 ---imm8----	
+# lli  1111  regA  0 ---imm8----
 
 def disassemble(code):
     full_assembly = []
-    opcodes = ["ld ", "st ", "add", "sub", "inv", "lsl", "lsr", "and", "or ", "slt", "", "beq", "bne", "jmp"]
+    opcodes = ["ld ", "st ", "add", "sub", "inv", "lsl", "lsr", "and", "or ", "slt", "", "beq", "bne", "jmp", "lui", "lli"]
 
     line_number = 0
     labels =[]
@@ -43,6 +48,7 @@ def disassemble(code):
         r3     = (value & 0b0000_000_000_111_000) >> 3
         off6   = (value & 0b0000_000_000_111_111)
         off12  = (value & 0b0000_111_111_111_111)
+        imm8   = (value & 0b0000_0000_1111_1111)
         
         assembly = ""
 
@@ -69,6 +75,9 @@ def disassemble(code):
             regA = r3
             regB = r1
             assembly += "r" + str(regA) + ", r" + str(regB)
+        elif opcode == 0b1110 or opcode == 0b1111:
+            regA = r1
+            assembly += "r" + str(regA) + ", " + "{:8s}".format(str(imm8))
         else:
             regA = r3
             regB = r1
@@ -113,7 +122,12 @@ line_no = 0
 
 if outname:
     f = open(outname, mode='w')
+
     for v in ass:
+        if line_no in labels:
+            print("# line ", line_no, file = f)
+            
         print(v, file=f)
+        line_no += 1        
     f.close()
 
