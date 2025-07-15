@@ -38,7 +38,9 @@ or     rd,   rs1,  rs2                         rd  := rs1 | rs2
 slt    rd,   rs1,  rs2                         rd  := 1 if rs1 < rs2 else 0  
 beq    rs1,  rs2,  offset6                     pc  := pc + 1 + offset6 if rs1 == rs2     # next instruction + offset6
 bne    rs1,  rs2,  offset6                     pc  := pc + 1 + offset6 if rs1 != rs2     # next instruction + offset6
-jmp    addr12                                pc  := offset12
+jmp    addr12                                  pc  := offset12
+lui    rd,   imm8                              rd  := {imm8, rd[7:0]}
+lli    rd,   imm8                              rd  := {rd[7:0], imm8}
 ```
 
 ## Machine code format     
@@ -58,6 +60,8 @@ slt    1001   rs1   rs2   rd    000
 beq    1011   rs1   rs2   -offset6-
 bne    1100   rs1   rs2   -offset6-
 jmp    1101   --------addr12-------
+lui    1110   rd    0  ----imm8----
+lli    1111   rd    0  ----imm8----
 ```
 
 ## Layout mapped to instruction register order   
@@ -76,19 +80,18 @@ or     1000   regB  regC  regA  000
 slt    1001   regB  regC  regA  000
 beq    1011   regA  regB  -offset6-
 bne    1100   regA  regB  -offset6-
-jmp    1101   -------addr 12-------
+jmp    1101   -------addr12--------
+lui    1110   regA  0  ----imm8----	
+lli    1111   regA  0  ----imm8----
 ```
 
 
 # Data and address bus widths 
 The PC address width is 16 bits, but a jump can only be 12 bits, and a branch can be a 6 bit signed offset (+31, -32).     
-The data bus address width is 16 bits, but is set at 3 bits in ```data_memory.v```   
+The data bus address width is 16 bits.  
 
-```
-wire [2:0] ram_addr=mem_access_addr[2:0];
-```
+Size of data and instruction memory are defined in the relevant verilog file, using ```bits_size_i``` and ```bits_size_d```    
 
-Changed in RISCv4 to be driven by parameters in ```parameter.v```    
 A ```bits_size_i``` of 5 will be 1 << 5 words, which is 32 words    
 
 ```
