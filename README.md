@@ -11,7 +11,7 @@ Simple RISC processor based on the fpga4students example
 | RISCv4       | Changed many names of modules and wires, added full test bench to single step each instruction and check outputs                                                              |
 | RISCv5       | Memory mapped IO (LED and switches tested on Digilent Nexys 4 DDR)                                                                                                            |
 | RISCv6       | Introduced an Address Decoder unit to make the IO / memory decoder more modular                                                                                               |
-
+| RISCv7       | Added MUX modules to give more code clarity, introduced LUI and LLI instructions and widened alu_op (4 bits), alu_src (2 bits) and reg_dst (2 bits)                           |
 
 # Instructions
 
