@@ -9,7 +9,7 @@ def is_int(s):
     return s.isnumeric() or (s[0] == "-" and s[1:].isnumeric())
 
 # pretty print the machine code binary, add a line number if not None
-def show_machine_code(line_no, val):
+def show_machine_code(line_no, val, c):
     v1 = (val & 0b1111_000_000_000_000) >> 12
     v2 = (val & 0b0000_111_000_000_000) >> 9
     v3 = (val & 0b0000_000_111_000_000) >> 6
@@ -17,7 +17,7 @@ def show_machine_code(line_no, val):
     v5 = (val & 0b0000_000_000_000_111)
     if line_no != None:
         print("{:4d} : ".format(line_no), end="") 
-    print("{:04b}_{:03b}_{:03b}_{:03b}_{:03b}".format(v1, v2, v3, v4, v5))
+    print("{:04b}_{:03b}_{:03b}_{:03b}_{:03b} {:s}".format(v1, v2, v3, v4, v5, c))
           
 def tokenise(txt) :	
     txt = txt.replace("[", " ")
@@ -26,8 +26,10 @@ def tokenise(txt) :
     txt = txt.replace(")","")
     txt = txt.lower()
 
+    comment = ""
     comment_location = txt.find("#")
     if comment_location != -1:
+        comment = "//" + txt[comment_location + 1:]
         txt = txt[:comment_location]
     
     # as a byproduct of the split
@@ -59,7 +61,7 @@ def tokenise(txt) :
             else:
                 jmp_label = c
           
-    return label, cmd, regA, regB, regC, value, jmp_label
+    return label, cmd, regA, regB, regC, value, jmp_label, comment
 
 # Instruction formats
 
@@ -104,7 +106,7 @@ def assemble(code):
     # Pass 1 - for labels
     line_number = 0
     for line in code:
-        (label, cmd, regA, regB, regC, value, jmp_label) = tokenise(line)
+        (label, cmd, regA, regB, regC, value, jmp_label, comment) = tokenise(line)
         if label:
             labels[label] = line_number
         if cmd:
@@ -113,7 +115,7 @@ def assemble(code):
     # Pass 2 - assembly
     line_number = 0
     for line in code:
-        (label, cmd, regA, regB, regC, value, jmp_label) = tokenise(line)
+        (label, cmd, regA, regB, regC, value, jmp_label, comment) = tokenise(line)
         #print(">>", label, cmd, regA, regB, regC, value, jmp_label)
         machine_code = 0
     
@@ -171,7 +173,7 @@ def assemble(code):
                 machine_code |= regA << 3
 
             line_number += 1
-            full_machine_code.append(machine_code)
+            full_machine_code.append((machine_code, comment))
 
     return full_machine_code
 
@@ -202,14 +204,14 @@ for l in code_clean:
 print()
 
 line_no = 0
-for v in fmc:
-    show_machine_code(line_no, v)
+for v, c in fmc:
+    show_machine_code(line_no, v, c)
     line_no += 1
 
 if outname:
     f = open(outname, mode='w')
-    for v in fmc:
-        print("{:016b}".format(v), file=f)
+    for v, c in fmc:
+        print("{:016b} {:s}".format(v, c), file=f)
     f.close()
 
 ##############################################################
