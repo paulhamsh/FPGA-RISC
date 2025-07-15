@@ -18,8 +18,9 @@ Simple RISC processor based on the fpga4students example
 A description of each instruction and the machine code format associated with it.
 
 **Note**     
-offset6 is signed 6 bits (twos complement)    
-offset12 is unsigned    
+offset6 is signed 6 bits offset (twos complement)    
+addr12 is unsigned 12 bit address   
+imm8 is unsigned 8 bit immediate value   
 
 ## Instructions  
 
@@ -38,7 +39,7 @@ or     rd,   rs1,  rs2                         rd  := rs1 | rs2
 slt    rd,   rs1,  rs2                         rd  := 1 if rs1 < rs2 else 0  
 beq    rs1,  rs2,  offset6                     pc  := pc + 1 + offset6 if rs1 == rs2     # next instruction + offset6
 bne    rs1,  rs2,  offset6                     pc  := pc + 1 + offset6 if rs1 != rs2     # next instruction + offset6
-jmp    addr12                                  pc  := offset12
+jmp    addr12                                  pc  := addr12
 lui    rd,   imm8                              rd  := {imm8, rd[7:0]}
 lli    rd,   imm8                              rd  := {rd[7:0], imm8}
 ```
