@@ -41,6 +41,12 @@ def disassemble(code):
     labels =[]
     
     for line in code:
+        comment = ""
+        comment_location = line.find("//")
+        if comment_location > -1:
+            comment = " # "+ line[comment_location + 2:]
+            line = line[:comment_location]
+        
         value = int(line, 2)
         opcode = (value & 0b1111_000_000_000_000) >> 12
         r1     = (value & 0b0000_111_000_000_000) >> 9
@@ -85,7 +91,7 @@ def disassemble(code):
             assembly += "r" + str(regA) + ", r" + str(regB) + ", r" + str(regC)
             
         line_number += 1
-        full_assembly.append(assembly)
+        full_assembly.append(assembly + comment)
 
     return full_assembly, labels
 
