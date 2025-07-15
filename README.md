@@ -100,14 +100,22 @@ A ```bits_size_i``` of 5 will be 1 << 5 words, which is 32 words
 
 ```
 
-# Datapath for RISCv4
+# Datapath for RISCv7
 
 <p align="center">
-  <img src="https://github.com/paulhamsh/FPGA-RISC/blob/main/RISCv4.jpg" width="800">
+  <img src="https://github.com/paulhamsh/FPGA-RISC/blob/main/RISCv6.jpg" width="800">
 </p>
+
 
 # Datapath for RISCv6
 
 <p align="center">
   <img src="https://github.com/paulhamsh/FPGA-RISC/blob/main/RISCv6.jpg" width="800">
 </p>
+
+# Datapath for RISCv4
+
+<p align="center">
+  <img src="https://github.com/paulhamsh/FPGA-RISC/blob/main/RISCv4.jpg" width="800">
+</p>
+
