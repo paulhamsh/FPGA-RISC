@@ -90,7 +90,7 @@ lli    1111   regA  0  ----imm8----
 The PC address width is 16 bits, but a jump can only be 12 bits, and a branch can be a 6 bit signed offset (+31, -32).     
 The data bus address width is 16 bits.  
 
-Size of data and instruction memory are defined in the relevant verilog file, using ```bits_size_i``` and ```bits_size_d```    
+Since RISCv4 the size of data and instruction memory are defined in the relevant verilog file, using ```bits_size_i``` and ```bits_size_d```    
 
 A ```bits_size_i``` of 5 will be 1 << 5 words, which is 32 words    
 
