@@ -40,8 +40,8 @@ slt    rd,   rs1,  rs2                         rd  := 1 if rs1 < rs2 else 0
 beq    rs1,  rs2,  offset6                     pc  := pc + 1 + offset6 if rs1 == rs2     # next instruction + offset6
 bne    rs1,  rs2,  offset6                     pc  := pc + 1 + offset6 if rs1 != rs2     # next instruction + offset6
 jmp    addr12                                  pc  := addr12
-lui    rd,   imm8                              rd  := {imm8, rd[7:0]}
-lli    rd,   imm8                              rd  := {rd[7:0], imm8}
+lui    rd,   imm8                              rd  := {imm8, rd[7:0]}                    # load upper 8 bits with immediate
+lli    rd,   imm8                              rd  := {rd[7:0], imm8}                    # load lower 8 bits with immediate
 ```
 
 ## Machine code format     
