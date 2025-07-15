@@ -88,7 +88,7 @@ lli    1111   regA  0  ----imm8----
 
 # Assembler
 
-To assemble from file ```test3.rsc``` and create `test3.mc``` output   
+To assemble from file ```test3.rsc``` and create ```test3.mc``` output   
 
 ```
 python ass.py test3.rsc
@@ -116,7 +116,7 @@ jmp   0
 
 # Disassembler
 
-To disassemble from file ```test3.mc``` and create `test3.rsc``` output   
+To disassemble from file ```test3.mc``` and create ```test3.rsc``` output   
 
 ```
 python dis.py test3.mc
