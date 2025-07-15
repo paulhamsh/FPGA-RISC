@@ -70,6 +70,8 @@ def tokenise(txt) :
 # beq    rs1, rs2, offset6
 # bne    rs1, rs2, offset6
 # jmp    offset12
+# lui    rd,  imm8
+# lli    rd,  imm8
 
 # ld   0000  rs1  rd   -offset6-
 # st   0001  rs1  rs2  -offset6-
@@ -77,7 +79,9 @@ def tokenise(txt) :
 # inv  0100  rs1  000  rd    000
 # beq  1011  rs1  rs2  -offset6-
 # bne  1100  rs1  rs2  -offset6-
-# 1d   1101  ------offset12-----
+# jmp  1101  ------offset12-----
+# lui  1110  rd   0 ----imm8----
+# lli  1111  rd   0 ----imm8----
 
 # ld   0000  regB regA --value--
 # st   0001  regB regA --value--
@@ -86,6 +90,8 @@ def tokenise(txt) :
 # beq  1011  regA regB --value--
 # bne  1100  regA regB --value--
 # jmp  1101  -----offset 12-----
+# lui  1110  regA  0 ---imm8----	
+# lli  1111  regA  0 ---imm8----
 	
 
 def assemble(code):
@@ -149,7 +155,15 @@ def assemble(code):
             elif cmd == "inv":		
                 machine_code = 0b0100 << 12
                 machine_code |= regA << 3	
-                machine_code |= regB << 9	
+                machine_code |= regB << 9
+            elif cmd == "lui":		
+                machine_code = 0b1110 << 12
+                machine_code |= regA << 9	
+                machine_code |= value
+            elif cmd == "lli":		
+                machine_code = 0b1111 << 12
+                machine_code |= regA << 9	
+                machine_code |= value
             elif cmd in arith_cmds:		
                 machine_code = arith_cmds[cmd] << 12
                 machine_code |= regB << 9	
