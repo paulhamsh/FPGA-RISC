@@ -86,6 +86,52 @@ lui    1110   regA  0  ----imm8----
 lli    1111   regA  0  ----imm8----
 ```
 
+# Assembler
+
+To assemble from file ```test3.rsc``` and create `test3.mc``` output   
+
+```
+python ass.py test3.rsc
+
+sub   r0, r0, r0       #        r0 = 0000000000000000
+ld    r3, r0[0]        #        r3 = Mem[0] = 1000_0000_0000_0001
+ld    r4, r0[1]        #        r4 = Mem[1] = 1000_0000_0000_0010
+ld    r5, r0[2]        #        r5 = Mem[2] = 1000_0000_0000_0100
+ld    r1, r3[0]        #        r1 = IO[1]
+ld    r2, r4[0]        #        r2 = IO[2]
+or    r6, r1, r2       #        r6 = r1 | r2
+st    r6, r5[0]        #        IO[4] = r6
+jmp   0
+
+   0 : 0011_000_000_000_000
+   1 : 0000_000_011_000_000
+   2 : 0000_000_100_000_001
+   3 : 0000_000_101_000_010
+   4 : 0000_011_001_000_000
+   5 : 0000_100_010_000_000
+   6 : 1000_001_010_110_000
+   7 : 0001_101_110_000_000
+   8 : 1101_000_000_000_000
+```
+
+# Disassembler
+
+To disassemble from file ```test3.mc``` and create `test3.rsc``` output   
+
+```
+python dis.py test3.mc
+
+# line  0
+   0 : sub r0, r0, r0
+   1 : ld  r3, r0(0)
+   2 : ld  r4, r0(1)
+   3 : ld  r5, r0(2)
+   4 : ld  r1, r3(0)
+   5 : ld  r2, r4(0)
+   6 : or  r6, r1, r2
+   7 : st  r6, r5(0)
+   8 : jmp 0
+```
 
 # Data and address bus widths 
 The PC address width is 16 bits, but a jump can only be 12 bits, and a branch can be a 6 bit signed offset (+31, -32).     
