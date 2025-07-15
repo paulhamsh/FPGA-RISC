@@ -1,6 +1,6 @@
 # FPGA-RISC
 Simple RISC processor based on the fpga4students example   (https://www.fpga4student.com/2017/04/verilog-code-for-16-bit-risc-processor.html)    
-Also, the book Digital Systems Design Using Verilog has been useful in my extensions to the original design. Section 9.4 describes a MIPS implementation which has a lot of similarity to the original design. (ISBN-10: ‎1305120744, ISBN-13:‎ 978-1305120747)    
+Also, the book Digital Systems Design Using Verilog  (ISBN-10: ‎1305120744, ISBN-13:‎ 978-1305120747) has been useful in my extensions to the original design. Section 9.4 describes a MIPS implementation which has a lot of similarity to the original design. (ISBN-10: ‎1305120744, ISBN-13:‎ 978-1305120747)    
 
 # Versions
 
