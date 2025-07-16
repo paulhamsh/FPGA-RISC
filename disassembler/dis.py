@@ -106,7 +106,7 @@ def disassemble(code):
                     assembly += label_names[jump_dest]
                     jump_dest = None
                 else:
-                    assembly += " {:9d}      ".format(off12)
+                    assembly += " {:8s}       ".format(str(off12))
             elif opcode == 0b1100 or opcode == 0b1011:
                 regA = r1
                 regB = r2
@@ -135,15 +135,10 @@ def disassemble(code):
                 output += "//" + comment
             
             if jump_dest != None:
-                jump_str = str(jump_dest)
-                if label_names.get(jump_dest):
-                    jump_str = label_names[jump_dest]
-                else:
-                    jump_str = str(jump_dest)
-                   
                 if comment == "":
                     output += "// "
-                output += "{jump to " + jump_str +  "}"
+                output += "{jump to " + str(jump_dest) +  "}"
+                
             full_assembly.append((line_number, output))
             line_number += 1
             
