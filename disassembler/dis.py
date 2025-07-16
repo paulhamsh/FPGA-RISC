@@ -101,13 +101,22 @@ def disassemble(code):
                 regB = r1
                 assembly += "r" + str(regA) + ", r" + str(regB) + "(" + str(signed_offset)+ ")"
             elif opcode == 0b1101:
-                assembly += " {:9d}      ".format(off12)
                 jump_dest = off12
+                if label_names.get(jump_dest):
+                    assembly += label_names[jump_dest]
+                    jump_dest = None
+                else:
+                    assembly += " {:9d}      ".format(off12)
             elif opcode == 0b1100 or opcode == 0b1011:
                 regA = r1
                 regB = r2
-                assembly += "r" + str(regA) + ", r" + str(regB) + ", " + "{:8s}".format(str(signed_offset))
+                assembly += "r" + str(regA) + ", r" + str(regB) + ", "
                 jump_dest = line_number + 1 + signed_offset
+                if label_names.get(jump_dest):
+                    assembly += label_names[jump_dest]
+                    jump_dest = None
+                else:
+                    assembly += "{:8s}".format(str(signed_offset))
             elif opcode == 0b0100:
                 regA = r3
                 regB = r1
