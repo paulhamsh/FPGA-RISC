@@ -12,11 +12,11 @@ and r2, r0, r1
 or  r2, r0, r1           
 slt r2, r0, r1           
 add r0, r0, r0           
-beq r0, r2, 1            // {jump to 14}
-bne r0, r2, 0            // {jump to 14}
-jmp          0           // {jump to start}
+beq r0, r2, 1        
+bne r0, r2, 0          
+jmp start          
 cont:
-ld  r1, r2(5)            // comment
+ld  r1, r2(5)            // comment 
 st  r3, r5(3)            // this is
 add r4, r2, r1           // a
 interim:
@@ -27,8 +27,8 @@ slt r4, r6, r3
 and r3, r7, r4           
 or  r2, r5, r6           
 inv r1, r2               
-beq r1, r2, -26          // {jump to start}
-bne r1, r2, 1            // {jump to end}
-jmp         18           // {jump to interim}
+beq r1, r2, start        
+bne r1, r2, end          
+jmp interim    
 end:
-jmp         28           // {jump to end}
+jmp end      
