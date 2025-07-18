@@ -61,7 +61,8 @@ def disassemble(code):
         brace_location = line.find("{")
         if brace_location > -1:
             line = line[:brace_location]
-        
+
+        line = line.strip()        
         comment_location = line.find("//")
         if comment_location > -1:
             comment = line[comment_location + 2:]
@@ -86,50 +87,48 @@ def disassemble(code):
             off12  = (value & 0b0000_111_111_111_111)
             imm8   = (value & 0b0000_0000_1111_1111)
         
-            assembly = ""
-
             if off6 > 31:
                 signed_offset = off6 - 64
             else:
                 signed_offset = off6
 
-            assembly = opcodes[opcode] + " "
+            assembly = f"{opcodes[opcode]:3s} "
         
             if   opcode <= 0b0001:
                 regA = r2
                 regB = r1
-                assembly += "r" + str(regA) + ", r" + str(regB) + "(" + str(signed_offset)+ ")"
+                assembly += f"r{regA:0d}, r{regB:0d}({signed_offset:0d})"
             elif opcode == 0b1101:
                 jump_dest = off12
                 if label_names.get(jump_dest):
                     assembly += label_names[jump_dest]
                 else:
-                    assembly += str(off12)
-                    comment += " {jump "+ str(jump_dest) + "}"
+                    assembly += f"{jump_dest:0d}"
+                    #comment += f" {{jump {jump_dest:0d} }}"
             elif opcode == 0b1100 or opcode == 0b1011:
                 regA = r1
                 regB = r2
-                assembly += "r" + str(regA) + ", r" + str(regB) + ", "
+                assembly += f"r{regA:0d}, r{regB:0d}, "
                 jump_dest = line_number + 1 + signed_offset
                 if label_names.get(jump_dest):
                     assembly += label_names[jump_dest]
                 else:
-                    assembly += str(signed_offset)
-                    comment += " {jump "+ str(jump_dest) + "}"
+                    assembly += f"{signed_offset:0d}"
+                    comment += f" {{jump {jump_dest:0d}}}"
             elif opcode == 0b0100:
                 regA = r3
                 regB = r1
-                assembly += "r" + str(regA) + ", r" + str(regB)
+                assembly += f"r{regA:0d}, r{regB:0d}"
             elif opcode == 0b1110 or opcode == 0b1111:
                 regA = r1
-                assembly += "r" + str(regA) + ", " + str(imm8)
+                assembly += f"r{regA:0d}, {imm8:0d}"
             else:
                 regA = r3
                 regB = r1
                 regC = r2
-                assembly += "r" + str(regA) + ", r" + str(regB) + ", r" + str(regC)
+                assembly += f"r{regA:0d}, r{regB:0d}, r{regC:0d}"
 
-            output = "{:25s}".format(assembly)
+            output = f"{assembly:25s}"
             if comment != "":
                 output += "//" + comment
  

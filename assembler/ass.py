@@ -8,15 +8,7 @@ import re
 def is_int(s):
     return s.isnumeric() or (s[0] == "-" and s[1:].isnumeric())
 
-# pretty print the machine code binary, add a line number if not None
-def machine_code_to_str(val):
-    v1 = (val & 0b1111_000_000_000_000) >> 12
-    v2 = (val & 0b0000_111_000_000_000) >> 9
-    v3 = (val & 0b0000_000_111_000_000) >> 6
-    v4 = (val & 0b0000_000_000_111_000) >> 3
-    v5 = (val & 0b0000_000_000_000_111)
-    return ("{:04b}_{:03b}_{:03b}_{:03b}_{:03b}".format(v1, v2, v3, v4, v5))
-          
+        
 def tokenise(txt) :	
     txt = txt.replace("[", " ")
     txt = txt.replace("]","")
@@ -117,8 +109,7 @@ def assemble(code):
     line_number = 0
     for line in code:
         (label, cmd, regA, regB, regC, value, jmp_label, comment) = tokenise(line)
-        machine_code = None
-        mc = ""
+        code = ""
         
         # Calculate a jump offset
         if jmp_label:
@@ -135,110 +126,34 @@ def assemble(code):
 
         if cmd:
             if   cmd == "ld":
-                machine_code = 0b0000 << 12
-                machine_code |= regB << 9
-                machine_code |= regA << 6
-                machine_code |= value & 0b111111 # 6 bits
-
-                mc =  "0000_"
-                mc += "{:03b}".format(regB) + "_"
-                mc += "{:03b}".format(regA) + "_"
-                mc += "{:06b}".format(value)             
-
+                code = f"0000_{regB:03b}_{regA:03b}_{value:06b}"
             elif cmd == "st":
-                machine_code = 0b0001 << 12
-                machine_code |= regB << 9
-                machine_code |= regA << 6
-                machine_code |= value & 0b111111 # 6 bits
-
-                mc =  "0001_"
-                mc += "{:03b}".format(regB) + "_"
-                mc += "{:03b}".format(regA) + "_"
-                mc += "{:06b}".format(value)
-                
+                code = f"0001_{regB:03b}_{regA:03b}_{value:06b}"
             elif cmd == "beq":
-                machine_code = 0b1011 << 12
-                machine_code |= regA << 9
-                machine_code |= regB << 6
-                machine_code |= value & 0b111111 # 6 bits
-
-                mc =  "1011_"
-                mc += "{:03b}".format(regA) + "_"
-                mc += "{:03b}".format(regB) + "_"
-                mc += "{:06b}".format(value) 
-
-                
+                code = f"1011_{regA:03b}_{regB:03b}_{value:06b}"
             elif cmd == "bne":
-                machine_code = 0b1100 << 12	
-                machine_code |= regA << 9	
-                machine_code |= regB << 6	
-                machine_code |= value & 0b111111 # 6 bits
-
-                
-                mc =  "1100_"
-                mc += "{:03b}".format(regA) + "_"
-                mc += "{:03b}".format(regB) + "_"
-                mc += "{:06b}".format(value) 
-
+                code = f"1100_{regA:03b}_{regB:03b}_{value:06b}"
             elif cmd == "jmp":		
-                machine_code = 0b1101 << 12
-                machine_code |= value & 0b111111111111 # 12 bits
-                
-                mc =  "1101_"
-                mc += "{:012b}".format(value)
-
+                code = f"1101_{value:012b}"
             elif cmd == "inv":		
-                machine_code = 0b0100 << 12
-                machine_code |= regB << 9
-                machine_code |= regA << 3
-
-                mc =  "0100_"
-                mc += "{:03b}".format(regB) + "_"
-                mc += "000_"
-                mc += "{:03b}".format(regA) + "_"
-                mc += "000"
-
-                
+                code = f"0100_{regB:03b}_000_{regA:03b}_000"
             elif cmd == "lui":		
-                machine_code = 0b1110 << 12
-                machine_code |= regA << 9	
-                machine_code |= value
-
-                mc =  "1110_"
-                mc += "{:03b}".format(regA) + "_"
-                mc += "{:08b}".format(value)
-                
+                code = f"1110_{regA:03b}_0_{value:08b}"
             elif cmd == "lli":		
-                machine_code = 0b1111 << 12
-                machine_code |= regA << 9	
-                machine_code |= value
-
-                mc =  "1111_"
-                mc += "{:03b}".format(regA) + "_"
-                mc += "{:08b}".format(value)
-                
+                code = f"1111_{regA:03b}_0_{value:08b}"
             elif cmd in arith_cmds:		
-                machine_code = arith_cmds[cmd] << 12
-                machine_code |= regB << 9	
-                machine_code |= regC << 6	
-                machine_code |= regA << 3
-
-                mc =  "{:04b}_".format(arith_cmds[cmd])
-                mc += "{:03b}".format(regB) + "_"
-                mc += "{:03b}".format(regC) + "_"
-                mc += "{:03b}".format(regA) + "_"
-                mc += "000"
+                code = f"{arith_cmds[cmd]:04b}_{regB:03b}_{regC:03b}_{regA:03b}_000"
                 
-        if line_to_label.get(line_number) and machine_code:
+        if line_to_label.get(line_number) and code:
             label = line_to_label[line_number]
         else:
             label = None
             
-        if machine_code or comment:
+        if code or comment:
             # don't add if just a label, that will still be there for the line with a command
-            result.append((line_number, label, machine_code, mc, comment))
+            result.append((line_number, label, code, comment))
             
-        if machine_code:
+        if code:
             line_number += 1
     return result
 
@@ -272,25 +187,22 @@ def create_line(do_line_numbers, line_no, label, code, comment):
     s = ""
     if code:
         if label:
-            s += ("// [{:s}:{:d}] \n".format(label, line_no)) + s
+            s += f"// [{label:s}:{line_no:d}] \n" + s
         if do_line_numbers:
-            s += "{:4d} : ".format(line_no)
-        s += machine_code_to_str(code) + " "
-    if comment:
-        s += comment
+            s += f"{line_no:4d} : "
+        s += f"{code:20s} "
+    s += comment
     return s
     
 # Print machine code with line numbers
-for line_no, label, code, mc, comment in fmc:
+for line_no, label, code, comment in fmc:
     s = create_line(True, line_no, label, code, comment)
-    if s != "":
-        print(s)
+    print(s)
 
 # Print machine code to a file
 if outname:
     f = open(outname, mode='w')
-    for line_no, label, code, mc, comment in fmc:
+    for line_no, label, code, comment in fmc:
         s = create_line(False, line_no, label, code, comment)
-        if s != "":
-            print(s, file = f)
+        print(s, file = f)
     f.close()
