@@ -1,5 +1,23 @@
 # My RISC simple assembler
-# Creates machine code from My RISC
+# Creates assembler from My RISC machine code
+
+# Disassemble a My RISC machine code file
+#
+# Format is:
+# {label} {code} {comment}
+# Where any item may be present or missing
+# Comments start //
+# Anything after a left brace will be removed  - {
+#
+# Example:
+#
+# label_here:
+#      ld rd, rs1(2)
+#      jmp label       // comment at end of line
+#      // standalone comment
+# end: jmp end
+#
+
 
 # Instruction formats
 
@@ -77,7 +95,7 @@ def disassemble(code):
             else:
                 output = "//" + comment
             full_assembly.append((None, output))
-        else:
+        elif line != "":
             value = int(line, 2)
             opcode = (value & 0b1111_000_000_000_000) >> 12
             r1     = (value & 0b0000_111_000_000_000) >> 9
@@ -129,6 +147,7 @@ def disassemble(code):
                 assembly += f"r{regA:0d}, r{regB:0d}, r{regC:0d}"
 
             output = f"{assembly:25s}"
+            
             if comment != "":
                 output += "//" + comment
  
@@ -146,7 +165,7 @@ if len(sys.argv) > 1:
     splitname = filename.split(".")
     outname = splitname[0] +".rsc"
 else:
-    filename = "test1.mc"
+    filename = "test1.mcin"
     outname = None
 
 f = open(filename, mode='r')
@@ -158,9 +177,9 @@ ass= disassemble(code_clean)
 
 # Print out the result
 line_no = 0
-for l, line in ass:
-    if l != None:
-        print("{:4d} : {:s}".format(l, line))
+for line_no, line in ass:
+    if line_no != None:
+        print(f"{line_no:4d} : {line:s}")
     else:
         print(line)
 print()
@@ -169,7 +188,10 @@ line_no = 0
 
 if outname:
     f = open(outname, mode='w')
-    for l, line in ass:
-        print(line, file=f)
+    for line_no, line in ass:
+        if line_no != None:
+            print(f"        {line:s}", file = f)
+        else:
+            print(line, file = f)
     f.close()
 

@@ -1,5 +1,24 @@
 # My RISC simple assembler
-# Creates machine code from My RISC
+# Creates machine code from My RISC assembler
+
+
+# Assemble a My RISC machine code file
+#
+# Format is:
+# {label_in_comment}
+# {binary} {comment}
+#
+# comments start with //
+# label_in_comment is formatted: // [label:line]
+#
+# Example:
+# 
+# // comment
+# // [start:0]
+# 0000_010_000_000000
+# 0000_010_000_000000  // with comment
+#
+
 
 import re
 
@@ -16,11 +35,19 @@ def tokenise(txt) :
     txt = txt.replace(")","")
     txt = txt.lower()
 
+
     comment = ""
     comment_location = txt.find("//")
     if comment_location != -1:
         comment = "//" + txt[comment_location + 2:]
-        txt = txt[:comment_location]
+        txt = txt[:comment_location].strip()
+
+    # remove anything after a left brace { (to allow for auto-label comments added)
+    brace_location = comment.find("{")
+    if brace_location > -1:
+        comment = comment[:brace_location].strip()
+        if comment == "//":
+            comment = ""
     
     # as a byproduct of the split
     # this will remove any + sign preceding a number
@@ -144,17 +171,10 @@ def assemble(code):
             elif cmd in arith_cmds:		
                 code = f"{arith_cmds[cmd]:04b}_{regB:03b}_{regC:03b}_{regA:03b}_000"
                 
-        if line_to_label.get(line_number) and code:
-            label = line_to_label[line_number]
-        else:
-            label = None
-            
-        if code or comment:
-            # don't add if just a label, that will still be there for the line with a command
-            result.append((line_number, label, code, comment))
-            
+        result.append((line_number, label, code, comment))
         if code:
             line_number += 1
+            
     return result
 
 ##############################################################
@@ -167,7 +187,7 @@ if len(sys.argv) > 1:
     splitname = re.split("\.", filename)
     outname = splitname[0] +".mc"
 else:
-    filename = "test1.rsc"
+    filename = "test1.rscin"
     outname = None
 
 f = open(filename, mode='r')
@@ -182,27 +202,30 @@ for l in code_clean:
     print(l)
 print()
 
-
-def create_line(do_line_numbers, line_no, label, code, comment):
-    s = ""
-    if code:
-        if label:
-            s += f"// [{label:s}:{line_no:d}] \n" + s
-        if do_line_numbers:
-            s += f"{line_no:4d} : "
-        s += f"{code:20s} "
-    s += comment
-    return s
     
 # Print machine code with line numbers
 for line_no, label, code, comment in fmc:
-    s = create_line(True, line_no, label, code, comment)
-    print(s)
+    # if a label, put on a line by itself without a line number
+    if label:
+        print(f"// [{label:s}:{line_no:d}]")
+        
+    # if just a comment, print without a line number
+    if comment and not code:    
+        print(f"{comment:s}")
+
+    # if code (with optional comment) print with a line number
+    if code:
+        print(f"{line_no:4d} : {code:22s} {comment:s}")
+
 
 # Print machine code to a file
 if outname:
     f = open(outname, mode='w')
     for line_no, label, code, comment in fmc:
-        s = create_line(False, line_no, label, code, comment)
-        print(s, file = f)
+        if label:
+            print(f"// [{label:s}:{line_no:d}]", file = f)
+        if code:
+            print(f"{code:22s} {comment:s}", file = f)
+        if comment and not code:    
+            print(f"{comment:s}", file = f)
     f.close()

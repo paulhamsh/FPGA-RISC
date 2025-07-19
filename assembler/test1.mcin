@@ -1,36 +1,42 @@
-// Comment line               
-start:
+// comment line
+    // another comment line
+    // comment - things in braces will be deleted {this will be removed}
+// [start:0] 
+    // [another_one:   0]  // with a comment
+0000_010_000_000_000 
+    0000_010_001_000_001 
+        0010_000_001_010_000 // [label to be ignored]
+    0001_001_010_000_000     // [ignore_me:23]
+0011_000_001_010_000 
+0100_000_000_010_000 
+0101_000_001_010_000 
+0110_000_001_010_000 
+0111_000_001_010_000 
+1000_000_001_010_000 
+1001_000_001_010_000 
+0010_000_000_000_000 
+1011_000_010_000_001 
+1100_000_010_000_000 
+1101_000_000_000_000 
+// [cont:15] 
+0000_010_001_000_101// comment
+0001_101_011_000_011             // comment
+0010_010_001_100_000     // comment
+// [interim:18] 
+0011_011_000_111_000  // comment
+0101_100_001_110_000 
+0110_101_010_101_000 
+1001_110_011_100_000 
+0111_111_100_011_000 
+1000_101_110_010_000 
+0100_010_000_001_000 
+1011_001_010_100_110 
+1100_001_010_000_001 
+1101_000_000_010_010 
+// [end:28] 
+1101_000_000_011_100 
+1101_000_000_000_001   
 
-	ld  r0, r2[0]
-	ld  r1, r2[1]
-	add r2, r0, r1
-        st  r2, r1[0]
-        sub r2, r0, r1
-        inv r2, r0
-        lsl r2, r0, r1
-        lsr r2, r0, r1
-        and r2, r0, r1
-        or  r2, r0, r1
-        slt r2, r0, r1
-        add r0, r0, r0
-        beq r0, r2, 1
-        bne r0, r2, 0
-        jmp 0
-cont:
-	ld  r1, r2[5] 			// comment // more
-	st  r3, r5[3] 			// this is
-	add r4, r2, r1 			// a 
-interim:
-	sub r7, r3, r0 			// comment
-	lsl r6, r4, r1
-	lsr r5, r5, r2
-	slt r4, r6, r3
-	and r3, r7, r4
-	or  r2, r5, r6
-	inv r1, r2
-	beq r1, r2, start
-	bne r1, r2, end
-	jmp interim
-end:
+
 
 

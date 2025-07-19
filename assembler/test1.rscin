@@ -1,8 +1,13 @@
 // comment line
+
 start:
+another_label:
+   another:   // with comment
 ld  r0, r2(0)            
-ld  r1, r2(1)            
-add r2, r0, r1           
+    ld  r1, r2(1)  
+jump_point:  
+here:  add r2, r0, r1  
+jmp here         
 st  r2, r1(0)            
 sub r2, r0, r1           
 inv r2, r0               
@@ -12,11 +17,11 @@ and r2, r0, r1
 or  r2, r0, r1           
 slt r2, r0, r1           
 add r0, r0, r0           
-beq r0, r2, 1        
-bne r0, r2, 0          
-jmp start          
+beq r0, r2, 1            // {jump 14}
+bne r0, r2, 0            // {jump 14}
+jmp          start          
 cont:
-ld  r1, r2(5)            // comment 
+ld  r1, r2(5)            // comment
 st  r3, r5(3)            // this is
 add r4, r2, r1           // a
 interim:
@@ -27,8 +32,9 @@ slt r4, r6, r3
 and r3, r7, r4           
 or  r2, r5, r6           
 inv r1, r2               
-beq r1, r2, start        
-bne r1, r2, end          
-jmp interim    
+beq r1, r2, start         
+bne r1, r2, end            
+jmp         interim       
 end:
-jmp end      
+jmp         end        
+jmp         1
