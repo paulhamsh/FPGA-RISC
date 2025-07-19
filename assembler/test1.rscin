@@ -17,8 +17,8 @@ and r2, r0, r1
 or  r2, r0, r1           
 slt r2, r0, r1           
 add r0, r0, r0           
-beq r0, r2, 1            // {jump 14}
-bne r0, r2, 0            // {jump 14}
+beq r0, r2, 1      
+bne r0, r2, 0         
 jmp          start          
 cont:
 ld  r1, r2(5)            // comment
