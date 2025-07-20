@@ -28,14 +28,15 @@ def is_int(s):
     return s.isnumeric() or (s[0] == "-" and s[1:].isnumeric())
 
         
-def tokenise(txt) :	
+def tokenise(txt) :
+    # remove () and [] that might surround an integer
     txt = txt.replace("[", " ")
     txt = txt.replace("]","")
     txt = txt.replace("(", " ")
     txt = txt.replace(")","")
     txt = txt.lower()
 
-
+    # process comments
     comment = ""
     comment_location = txt.find("//")
     if comment_location != -1:
@@ -63,7 +64,10 @@ def tokenise(txt) :
 
     for c in sp:
         if len(c) > 0:             # don't process an empty cell
-            if c[-1] == ":":
+            if c[0] == "#":
+                # ignore line numbers
+                pass
+            elif c[-1] == ":":
                 label = c[:-1]
             elif cmd == None:
                 cmd = c
@@ -181,13 +185,22 @@ def assemble(code):
 
 
 import sys, os
+do_line_numbers = False
+filename = ""
 
-if len(sys.argv) > 1:
+if len(sys.argv) == 3:
+    filename = sys.argv[2]
+    if sys.argv[1] == "-lineno":
+        do_line_numbers = True
+elif len(sys.argv) == 2:
     filename = sys.argv[1]
+
+
+if filename != "":
     splitname = re.split("\.", filename)
     outname = splitname[0] +".mc"
 else:
-    filename = "test1.rscin"
+    filename = "test4.rscin"
     outname = None
 
 f = open(filename, mode='r')
@@ -208,15 +221,15 @@ for line_no, label, code, comment in fmc:
     # if a label, put on a line by itself without a line number
     if label:
         print(f"// [{label:s}:{line_no:d}]")
-        
     # if just a comment, print without a line number
     if comment and not code:    
-        print(f"{comment:s}")
-
+        print(f"         {comment:s}")
     # if code (with optional comment) print with a line number
     if code:
-        print(f"{line_no:4d} : {code:22s} {comment:s}")
-
+        if do_line_numbers:
+            print(f"#{line_no:<4d}    {code:22s} {comment:s}")
+        else:
+            print(f"         {code:22s} {comment:s}")
 
 # Print machine code to a file
 if outname:
@@ -224,8 +237,11 @@ if outname:
     for line_no, label, code, comment in fmc:
         if label:
             print(f"// [{label:s}:{line_no:d}]", file = f)
-        if code:
-            print(f"{code:22s} {comment:s}", file = f)
         if comment and not code:    
-            print(f"{comment:s}", file = f)
+            print(f"         {comment:s}", file = f)
+        if code:
+            if do_line_numbers:
+                print(f"#{line_no:<4d}    {code:22s} {comment:s}", file = f)
+            else:
+                print(f"         {code:22s} {comment:s}", file = f)
     f.close()

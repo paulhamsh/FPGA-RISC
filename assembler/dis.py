@@ -75,7 +75,7 @@ def disassemble(code):
         comment = ""
         assembly = ""
 
-        # remove anything after a left brace { (to allow for auto-label comments added)
+        # remove anything after a left brace { - to allow for auto-label comments added
         brace_location = line.find("{")
         if brace_location > -1:
             line = line[:brace_location]
@@ -122,7 +122,6 @@ def disassemble(code):
                     assembly += label_names[jump_dest]
                 else:
                     assembly += f"{jump_dest:0d}"
-                    #comment += f" {{jump {jump_dest:0d} }}"
             elif opcode == 0b1100 or opcode == 0b1011:
                 regA = r1
                 regB = r2
@@ -165,7 +164,7 @@ if len(sys.argv) > 1:
     splitname = filename.split(".")
     outname = splitname[0] +".rsc"
 else:
-    filename = "test1.mcin"
+    filename = "test1.mc"
     outname = None
 
 f = open(filename, mode='r')
@@ -179,9 +178,9 @@ ass= disassemble(code_clean)
 line_no = 0
 for line_no, line in ass:
     if line_no != None:
-        print(f"{line_no:4d} : {line:s}")
+        print(f"#{line_no:<4d}      {line:s}")
     else:
-        print(line)
+        print(f"      {line:s}")
 print()
 
 line_no = 0
