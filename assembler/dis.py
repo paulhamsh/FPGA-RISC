@@ -3,21 +3,21 @@
 
 # Disassemble a My RISC machine code file
 #
+
+
 # Format is:
-# {label} {code} {comment}
-# Where any item may be present or missing
-# Comments start //
-# Anything after a left brace will be removed  - {
+# {label_in_comment}
+# {binary} {comment}
+#
+# comments start with //
+# label_in_comment is formatted: // [label:line]
 #
 # Example:
-#
-# label_here:
-#      ld rd, rs1(2)
-#      jmp label       // comment at end of line
-#      // standalone comment
-# end: jmp end
-#
-
+# 
+# // comment
+# // [start:0]
+# 0000_010_000_000000
+# 0000_010_000_000000  // with comment
 
 # Instruction formats
 
@@ -162,10 +162,11 @@ import sys, os
 if len(sys.argv) > 1:
     filename = sys.argv[1]
     splitname = filename.split(".")
-    outname = splitname[0] +".rsc"
+    outname1 = splitname[0] +".rsc"
+    outname2 = splitname[0] +".lrs"
 else:
     filename = "test1.mc"
-    outname = None
+    outname1 = None
 
 f = open(filename, mode='r')
 code = f.readlines()
@@ -178,19 +179,23 @@ ass= disassemble(code_clean)
 line_no = 0
 for line_no, line in ass:
     if line_no != None:
-        print(f"#{line_no:<4d}      {line:s}")
+        print(f"{line_no:<4d}      {line:s}")
     else:
-        print(f"      {line:s}")
+        print(f"     {line:s}")
 print()
 
 line_no = 0
 
-if outname:
-    f = open(outname, mode='w')
+if outname1:
+    f1 = open(outname1, mode='w')
+    f2 = open(outname2, mode='w')
     for line_no, line in ass:
         if line_no != None:
-            print(f"        {line:s}", file = f)
+            print(f"          {line:s}", file = f1)
+            print(f"{line_no:<4d}      {line:s}", file = f2)
         else:
-            print(line, file = f)
-    f.close()
+            print(line, file = f1)
+            print(line, file = f2)
+    f1.close()
+    f2.close()
 

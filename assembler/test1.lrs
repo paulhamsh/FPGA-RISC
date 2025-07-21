@@ -1,0 +1,41 @@
+// comment line
+start:
+another_label:
+another:
+// with comment
+0         ld  r0, r2(0)            
+1         ld  r1, r2(1)            
+jump_point:
+here:
+2         add r2, r0, r1           
+3         jmp here                 
+4         st  r2, r1(0)            
+5         sub r2, r0, r1           
+6         inv r2, r0               
+7         lsl r2, r0, r1           
+8         lsr r2, r0, r1           
+9         and r2, r0, r1           
+10        or  r2, r0, r1           
+11        slt r2, r0, r1           
+12        add r0, r0, r0           
+13        beq r0, r2, 1            // {jump 15}
+14        bne r0, r2, 0            // {jump 15}
+15        jmp another              
+cont:
+16        ld  r1, r2(5)            // comment
+17        st  r3, r5(3)            // this is
+18        add r4, r2, r1           // a
+interim:
+19        sub r7, r3, r0           // comment
+20        lsl r6, r4, r1           
+21        lsr r5, r5, r2           
+22        slt r4, r6, r3           
+23        and r3, r7, r4           
+24        or  r2, r5, r6           
+25        inv r1, r2               
+26        beq r1, r2, another      
+27        bne r1, r2, end          
+28        jmp interim              
+end:
+29        jmp end                  
+30        jmp 1                    

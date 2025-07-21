@@ -5,18 +5,19 @@
 # Assemble a My RISC machine code file
 #
 # Format is:
-# {label_in_comment}
-# {binary} {comment}
-#
-# comments start with //
-# label_in_comment is formatted: // [label:line]
+# {line_number} {label} {code} {comment}
+# Where any item may be present or missing
+# Comments start //
+# Anything after a left brace will be removed  - {
 #
 # Example:
-# 
-# // comment
-# // [start:0]
-# 0000_010_000_000000
-# 0000_010_000_000000  // with comment
+#
+# label_here:
+#      ld rd, rs1(2)
+#      jmp label       // comment at end of line
+#      // standalone comment
+# end: jmp end
+#
 #
 
 
@@ -30,25 +31,29 @@ def is_int(s):
         
 def tokenise(txt) :
     # remove () and [] that might surround an integer
+    # make the left bracket into a space - for split()
+    # and remove the right brackets
+    # so ld r0, r2(0) becomes [ld, r0, r2, 0]
+    
     txt = txt.replace("[", " ")
     txt = txt.replace("]","")
     txt = txt.replace("(", " ")
     txt = txt.replace(")","")
     txt = txt.lower()
 
-    # process comments
+    # remove anything in braces {} - only allowed once in any line
+    l_brace = txt.find("{")
+    r_brace = txt.find("}")
+    if r_brace > -1 and l_brace > -1:
+        txt = txt[ : l_brace] + txt [r_brace + 1: ]
+
+    # process comments - anything from // to end of the line
+    # 
     comment = ""
     comment_location = txt.find("//")
     if comment_location != -1:
-        comment = "//" + txt[comment_location + 2:]
-        txt = txt[:comment_location].strip()
-
-    # remove anything after a left brace { (to allow for auto-label comments added)
-    brace_location = comment.find("{")
-    if brace_location > -1:
-        comment = comment[:brace_location].strip()
-        if comment == "//":
-            comment = ""
+        comment = txt[comment_location : ]
+        txt = txt[ : comment_location].strip()
     
     # as a byproduct of the split
     # this will remove any + sign preceding a number
@@ -62,9 +67,9 @@ def tokenise(txt) :
     value = None
     jmp_label = None
 
-    for c in sp:
+    for ind, c in enumerate(sp):
         if len(c) > 0:             # don't process an empty cell
-            if c[0] == "#":
+            if ind == 0 and is_int(c):
                 # ignore line numbers
                 pass
             elif c[-1] == ":":
@@ -185,23 +190,18 @@ def assemble(code):
 
 
 import sys, os
-do_line_numbers = False
 filename = ""
 
-if len(sys.argv) == 3:
-    filename = sys.argv[2]
-    if sys.argv[1] == "-lineno":
-        do_line_numbers = True
-elif len(sys.argv) == 2:
+if len(sys.argv) == 2:
     filename = sys.argv[1]
-
 
 if filename != "":
     splitname = re.split("\.", filename)
-    outname = splitname[0] +".mc"
+    outname1 = splitname[0] + ".mc"
+    outname2 = splitname[0] + ".lmc"
 else:
     filename = "test4.rscin"
-    outname = None
+    outname1 = None
 
 f = open(filename, mode='r')
 code = f.readlines()
@@ -223,25 +223,25 @@ for line_no, label, code, comment in fmc:
         print(f"// [{label:s}:{line_no:d}]")
     # if just a comment, print without a line number
     if comment and not code:    
-        print(f"         {comment:s}")
+        print(f"        {comment:s}")
     # if code (with optional comment) print with a line number
     if code:
-        if do_line_numbers:
-            print(f"#{line_no:<4d}    {code:22s} {comment:s}")
-        else:
-            print(f"         {code:22s} {comment:s}")
+        print(f"{line_no:<4d}    {code:22s} {comment:s}")
+
 
 # Print machine code to a file
-if outname:
-    f = open(outname, mode='w')
+if outname1:
+    f1 = open(outname1, mode='w')
+    f2 = open(outname2, mode='w')
     for line_no, label, code, comment in fmc:
         if label:
-            print(f"// [{label:s}:{line_no:d}]", file = f)
+            print(f"// [{label:s}:{line_no:d}]", file = f1)
+            print(f"// [{label:s}:{line_no:d}]", file = f2)
         if comment and not code:    
-            print(f"         {comment:s}", file = f)
+            print(f"       {comment:s}", file = f1)
+            print(f"       {comment:s}", file = f2)
         if code:
-            if do_line_numbers:
-                print(f"#{line_no:<4d}    {code:22s} {comment:s}", file = f)
-            else:
-                print(f"         {code:22s} {comment:s}", file = f)
-    f.close()
+            print(f"        {code:22s} {comment:s}", file = f1)
+            print(f"{line_no:<4d}    {code:22s} {comment:s}", file = f2)
+    f1.close()
+    f2.close()
