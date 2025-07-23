@@ -30,15 +30,18 @@ def is_int(s):
 
         
 def tokenise(txt) :
-    # remove () and [] that might surround an integer
-    # make the left bracket into a space - for split()
+    # remove () and [] and + that might surround / precede an integer
+    # make the left bracket and + into a space - for split()
     # and remove the right brackets
-    # so ld r0, r2(0) becomes [ld, r0, r2, 0]
+    # so:
+    # ld r0, r2(0) => ld r0 r2 0
+    # ld r0, r2+10 => ld r0 r2 10
     
     txt = txt.replace("[", " ")
     txt = txt.replace("]","")
     txt = txt.replace("(", " ")
     txt = txt.replace(")","")
+    txt = txt.replace("+", " ")
     txt = txt.lower()
 
     # remove anything in braces {} - only allowed once in any line
@@ -48,16 +51,13 @@ def tokenise(txt) :
         txt = txt[ : l_brace] + txt [r_brace + 1: ]
 
     # process comments - anything from // to end of the line
-    # 
     comment = ""
     comment_location = txt.find("//")
     if comment_location != -1:
         comment = txt[comment_location : ]
         txt = txt[ : comment_location].strip()
     
-    # as a byproduct of the split
-    # this will remove any + sign preceding a number
-    sp = re.split("[,\s\+]+", txt)
+    sp = re.split("[,\s]+", txt)
 
     label = None	
     cmd   = None	
@@ -194,54 +194,62 @@ filename = ""
 
 if len(sys.argv) == 2:
     filename = sys.argv[1]
-
-if filename != "":
     splitname = re.split("\.", filename)
     outname1 = splitname[0] + ".mc"
     outname2 = splitname[0] + ".lmc"
 else:
     filename = "test4.rscin"
     outname1 = None
+    outname2 = None
 
+# read input file  into code_clean   
 f = open(filename, mode='r')
 code = f.readlines()
-code_clean =[l.strip() for l in code]
 f.close()
+code_clean =[line.strip() for line in code]
 
+# assemble
 fmc = assemble(code_clean)
 
 # Print out the result
 for l in code_clean:
     print(l)
+
 print()
 
-    
-# Print machine code with line numbers
-for line_no, label, code, comment in fmc:
-    # if a label, put on a line by itself without a line number
-    if label:
-        print(f"// [{label:s}:{line_no:d}]")
-    # if just a comment, print without a line number
-    if comment and not code:    
-        print(f"        {comment:s}")
-    # if code (with optional comment) print with a line number
-    if code:
-        print(f"{line_no:<4d}    {code:22s} {comment:s}")
-
-
-# Print machine code to a file
+# helper to reduce number of checks on files in the main loop
+def printfile(txt, f):
+    if f != None:
+        print(txt, file = f)
+        
+# Print machine code to two files, one with line numbers, one without
 if outname1:
     f1 = open(outname1, mode='w')
     f2 = open(outname2, mode='w')
-    for line_no, label, code, comment in fmc:
-        if label:
-            print(f"// [{label:s}:{line_no:d}]", file = f1)
-            print(f"// [{label:s}:{line_no:d}]", file = f2)
-        if comment and not code:    
-            print(f"       {comment:s}", file = f1)
-            print(f"       {comment:s}", file = f2)
-        if code:
-            print(f"        {code:22s} {comment:s}", file = f1)
-            print(f"{line_no:<4d}    {code:22s} {comment:s}", file = f2)
+else:
+    f1 = None
+    f2 = None
+    
+for line_no, label, code, comment in fmc:
+    if label:
+        s = f"// [{label:s}:{line_no:d}]"
+        print(s)
+        printfile(s, f1)
+        printfile(s, f2)
+
+    if comment and not code:
+        s = f"       {comment:s}"
+        print(s)
+        printfile(s, f1)
+        printfile(s, f2)
+        
+    if code:
+        s1 = f"        {code:22s} {comment:s}"
+        s2 = f"{line_no:<4d}    {code:22s} {comment:s}"
+        print(s2)
+        printfile(s1, f1)
+        printfile(s2, f2)
+
+if outname1:
     f1.close()
     f2.close()

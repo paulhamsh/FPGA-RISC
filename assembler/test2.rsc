@@ -1,4 +1,4 @@
-// comment line
+ comment line
 start:
           ld  r0, r2(0)            
           ld  r1, r2(1)            

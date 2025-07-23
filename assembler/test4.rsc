@@ -14,11 +14,11 @@ here:
           inv r2, r0               
           lsl r2, r0, r1           
           lsr r2, r0, r1           
-          and r2, r0, r1           // to remove
+          and r2, r0, r1           
           or  r2, r0, r1           
           slt r2, r0, r1           
           add r0, r0, r0           
-          beq r0, r2, 1            // comment {jump 15}
+          beq r0, r2, 1            // {jump 15}
           bne r0, r2, 0            // {jump 15}
           jmp another              
 cont:
