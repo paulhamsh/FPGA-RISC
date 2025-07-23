@@ -1,24 +1,27 @@
 # My RISC simple assembler
 # Creates machine code from My RISC assembler
 
+# Writes output to the screen and two files
+# Screen and .lrs file have line numbers
+# The .rsc file doesn't have line numbers
 
 # Assemble a My RISC machine code file
-#
+
 # Format is:
 # {line_number} {label} {code} {comment}
 # Where any item may be present or missing
 # Comments start //
 # Anything after a left brace will be removed  - {
-#
+
 # Example:
-#
+
 # label_here:
 #      ld rd, rs1(2)
 #      jmp label       // comment at end of line
 #      // standalone comment
 # end: jmp end
-#
-#
+
+
 
 
 import re

@@ -2,13 +2,16 @@
 # Creates assembler from My RISC machine code
 
 # Disassemble a My RISC machine code file
-#
 
+# Writes output to the screen and two files
+# Screen and .lmc file have line numbers
+# The .mc file doesn't have line numbers
 
 # Format is:
+
 # {label_in_comment}
 # {line_number} {binary} {comment}
-#
+
 # {comment} starts with // and run to the end of the line
 # {label_in_comment} is formatted: // [label:line_number]
 #                    - should be the only thing on that line
@@ -18,7 +21,7 @@
 # {binary} is a 16 bit binary number with underscores permitted
 
 # Example:
-# 
+ 
 # // comment
 # // [start:0]
 # 0000_010_000_000000
@@ -130,9 +133,7 @@ def disassemble(code):
             # and process all the optional registers and value
             # ld and st
             if   opcode <= 0b0001:
-                regA = r2
-                regB = r1
-                assembly += f"r{regA:0d}, r{regB:0d}({signed_offset:0d})"
+                assembly += f"r{r2:0d}, r{r1:0d}({signed_offset:0d})"
             # jmp
             elif opcode == 0b1101:
                 jump_dest = off12
@@ -142,9 +143,7 @@ def disassemble(code):
                     assembly += f"{jump_dest:0d}"
             # beq and bne
             elif opcode == 0b1100 or opcode == 0b1011:
-                regA = r1
-                regB = r2
-                assembly += f"r{regA:0d}, r{regB:0d}, "
+                assembly += f"r{r1:0d}, r{r2:0d}, "
                 jump_dest = line_number + 1 + signed_offset
                 if label_names.get(jump_dest):
                     assembly += label_names[jump_dest]
@@ -156,19 +155,13 @@ def disassemble(code):
                     comment += f" {{jump {jump_dest:0d}}}"
             # inv
             elif opcode == 0b0100:
-                regA = r3
-                regB = r1
-                assembly += f"r{regA:0d}, r{regB:0d}"
+                assembly += f"r{r3:0d}, r{r1:0d}"
             # lli and lui
             elif opcode == 0b1110 or opcode == 0b1111:
-                regA = r1
-                assembly += f"r{regA:0d}, {imm8:0d}"
+                assembly += f"r{r1:0d}, {imm8:0d}"
             # other arithmetic instructions
             else:
-                regA = r3
-                regB = r1
-                regC = r2
-                assembly += f"r{regA:0d}, r{regB:0d}, r{regC:0d}"
+                assembly += f"r{r3:0d}, r{r1:0d}, r{r2:0d}"
 
             # create the output with the assembly plus a comment
             # (which could be empty)
